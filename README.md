@@ -1,1 +1,1 @@
-# yx to thesis
+# thesis for yx

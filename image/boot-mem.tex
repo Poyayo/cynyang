@@ -1,0 +1,60 @@
+\documentclass[varwidth]{standalone}
+\usepackage{fontspec}
+\setmonofont{DejaVu Sans Mono}
+\begin{document}
+\begin{verbatim}
+    0x100000 ┌────────────────────┬───────── 1MB
+             │   JMP F000:E05B    │ 16B
+             ├─                  ─┤
+             │    System BIOS     │ 64KB-16B
+     0xF0000 ├────────────────────┤ 
+             │   Expansion Area   │
+             │ (maps ROMs for old │ 160KB
+             │  peripheral cards) │
+     0xC8000 ├────────────────────┤
+             │     Video BIOS     │ 32KB
+     0xC0000 ├────────────────────┤
+             │ Legacy Video Card  │ 128KB
+     0xA0000 ├────────────────────┤
+             │  Ext. System BIOS  │ 1KB
+     0x9FC00 ├────────────────────┤
+             │     Available      │ ~608KB
+      0x7E00 ├────────────────────┤
+             │        MBR         │ 512B
+      0x7C00 ├────────────────────┤
+             │     Available      │ ~30KB
+       0x500 ├────────────────────┤ 
+             │    System BIOS     │ 256B
+       0x400 ├────────────────────┤
+             │Interrupt Vector Tbl│ 1KB
+           0 └────────────────────┘ 
+\end{verbatim}
+\end{document}
+
+% \usepackage{fancyvrb,xcolor}
+% \begin{Verbatim}[commandchars=\\{\}]
+% \end{Verbatim}
+% ---------------------------------------------------------------------
+% 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+% 250x	─	━	│	┃	┄	┅	┆	┇	┈	┉	┊	┋	┌	┍	┎	┏
+% 251x	┐	┑	┒	┓	└	┕	┖	┗	┘	┙	┚	┛	├	┝	┞	┟
+% 252x	┠	┡	┢	┣	┤	┥	┦	┧	┨	┩	┪	┫	┬	┭	┮	┯
+% 253x	┰	┱	┲	┳	┴	┵	┶	┷	┸	┹	┺	┻	┼	┽	┾	┿
+% 254x	╀	╁	╂	╃	╄	╅	╆	╇	╈	╉	╊	╋	╌	╍	╎	╏
+% 255x	═	║	╒	╓	╔	╕	╖	╗	╘	╙	╚	╛	╜	╝	╞	╟
+% 256x	╠	╡	╢	╣	╤	╥	╦	╧	╨	╩	╪	╫	╬	╭	╮	╯
+% 257x	╰	╱	╲	╳	╴	╵	╶	╷	╸	╹	╺	╻	╼	╽	╾	╿
+% 258x	▀	▁	▂	▃	▄	▅	▆	▇	█	▉	▊	▋	▌	▍	▎	▏
+% 259x	▐	░	▒	▓	▔	▕	▖	▗	▘	▙	▚	▛	▜	▝	▞	▟
+% 25Ax	■	□	▢	▣	▤	▥	▦	▧	▨	▩	▪	▫	▬	▭	▮	▯
+% 25Bx	▰	▱	▲	△	▴	▵	▶	▷	▸	▹	►	▻	▼	▽	▾	▿
+% 25Cx	◀	◁	◂	◃	◄	◅	◆	◇	◈	◉	◊	○	◌	◍	◎	●
+% 25Dx	◐	◑	◒	◓	◔	◕	◖	◗	◘	◙	◚	◛	◜	◝	◞	◟
+% 25Ex	◠	◡	◢	◣	◤	◥	◦	◧	◨	◩	◪	◫	◬	◭	◮	◯
+% 25Fx	◰	◱	◲	◳	◴	◵	◶	◷	◸	◹	◺	◻	◼	◽	◾	◿
+% ---------------------------------------------------------------------
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

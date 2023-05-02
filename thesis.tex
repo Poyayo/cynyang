@@ -1,0 +1,116 @@
+\documentclass{swfuthesis}
+
+\usepackage{biolinum}
+\newcommand\Ctrl[1]{\LKeyCtrlX{#1}} % for Ctrl-u Ctrl-l
+
+\graphicspath{{./image}}
+
+\addbibresource{thesis.bib} % 参照教程自己去写一个.bib文件
+
+\swfusetup{%
+  Title={基于Linux的操作系统研究}, % 论文标题
+  Author={杨鑫}, % 作者姓名
+  ID={20211159013},%
+  Signature={\includegraphics[width=6em]{yangxin.pdf}},%
+  enTitle={Research on Operating System based on Linux},%
+  enAuthor={CynYang}, % 作者姓名（英文）
+  Advisor={王晓林（讲师）}, % 指导教师姓名（职称）
+  Year={\the\year},
+  Month={\the\month},
+  Date={\the\day},
+  Major={计算机科学与技术专业}, %专业名称（比如 电子信息工程专业）
+}
+
+\begin{document}
+
+\maketitle
+\frontmatter
+
+\begin{abstract} % 摘要
+  本文研究的是基于Linux的操作系统。首先介绍了Linux的发展历程及其特点，包括开源、自由、可定
+  制等。接着详细介绍了Linux操作系统的内核结构和系统调用，解释了Linux的开机过程、中断、进程
+  管理、文件系统。
+
+  在学习Linux操作系统的基础上，本文还包括了一个简单的、实验性的操作系统的编码实现。该
+  操作系统采用汇编语言与C语言编写，实现了简单的进程管理、文件系统和一个简单
+  的Shell. 在实现过程中，本文详细阐述了操作系统的设计思路、算法实现和关键技术，包括进程调
+  度算法、中断处理算法、文件系统实现和shell的一些基本功能应用。
+\end{abstract}
+
+\begin{keyword} % 关键词
+Boot; Loader; GDT; Kernel; 中断; 进程调度; Shell;
+\end{keyword}
+
+\begin{EAbstract}
+  This paper studies the operating system based on Linux. Firstly, it introduces the development history and characteristics of Linux, including open source, freedom,
+  System etc. Next, the internal structure and system adjustment of the Linux operating system are introduced in detail, and the boot process, interruption, and process of Linux are explained.
+  Management, file system.
+
+  In addition to introducing the relevant knowledge of the Linux operating system, it also includes a simple, experimental coding practice of the operating system.
+  The operating system is based on the Linux kernel, written in assembly language and C language, and realizes simple program management, file system and a simple single
+  shell. In the actual process, this paper describes in detail the design ideas, algorithm reality and key technologies of the operating system, including
+  Some basic functional applications of calculation method, interrupt processing method, file system implementation and shell.
+\end{EAbstract}
+\begin{EKeyword}
+Boot; Loader; GDT; Kernel; Interrupt; Process Scheduling; Shell;  
+\end{EKeyword}
+
+\tableofcontents     % 目录
+% \listoffigures       % 插图目录，可以没有
+% \listoftables        % 表格目录，可以没有
+\cleardoublepage % keep this line
+%\pagenumbering{arabic}
+
+\mainmatter
+
+% 参考教程，在chapters目录中单独写各章（ch1.tex, ch2.tex...）
+\include{chapters/ch1} %%% 论文的目录结构大致如下：
+\include{chapters/ch2} % thesis/
+\include{chapters/ch3} %       ├── doc/
+\include{chapters/ch4} %       │      ├── thesis.tex
+\include{chapters/ch5} %       │      ├── chapters/
+%\include{chapters/ch6} %       │      │   ├── ch1.tex
+%\include{chapters/ch7} %       │      │   ├── ch2.tex
+%\include{chapters/ch8} %       │      │   ├── ch3.tex
+%\include{chapters/ch9} %       │      │   └── ...
+%\include{chapters/cha} %       │      ├── figs/
+%\include{chapters/chb} %       │      │   ├── flowchart.pdf
+%\include{chapters/chc} %       │      │   └── ...
+%\include{chapters/chd} %       │      └── ...
+%\include{chapters/che} %       └── src/
+%\include{chapters/chf} %              ├── hello.c
+%\include{chapters/chg} %              └── ...
+%\include{chapters/chh} %%%
+
+%%%%% appendix （参考文献、指导教师简介、鸣谢、附录）
+\appendix % keep this line
+\makebib % 参考文献
+
+\begin{advisorInfo} % 指导教师简介
+  王晓林，男，50岁，硕士，讲师，毕业于英国格林尼治大学，分布式计算系统专业。现任
+  西南林业大学计信学院教师。执教Linux、操作系统、网络技术等方面的课程，有丰富的Linux教学和系统管理经验。
+\end{advisorInfo}
+
+\begin{acknowledgment} % 致谢
+  首先我要感谢对我悉心指导和引导我走进LinuxOS世界的指导老师，王晓林老师，如果没有遇到他的
+  话，我甚至可能不会接触Linux这个操作系统，感谢他在这方面给予了我很多帮助，在遇到很多Linux
+  方面的问题是都是他帮助我解决了，因为有他所以我才能从一位Windows用户变到Linux用户然后再爱
+  上Linux。其次，还要感谢两本书的作者，他们分别是《OrangeS:一个操作系统的实现》的作者于渊
+  和《操作系统真相还原》的作者郑钢，如果没有他们写的这两本书的话，我的这次毕业设计将会困难
+  重重，他们写的书给了我很多帮助，很多地方都解释的非常到位，基本上从头到尾跟着做一遍下来的
+  话都是能够理解的。最后还要感谢期间帮助过我的朋友、同学们，如果没有他们的鼓励和支持的话也
+  许我也早就放弃了，感谢大家对我的帮助。
+\end{acknowledgment}
+
+%%%%% 附录章节
+\singlespacing
+%\include{chapters/ch5}
+\include{chapters/ch6}
+
+\end{document} % 结束。不要动下面几行！
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+

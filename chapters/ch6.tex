@@ -1,0 +1,69 @@
+\chapter{相关代码}%
+\section{MBR}
+\label{fsec:mbr}
+\inputminted{nasm}{./code/mbr.S}
+
+\section{Rd Disk}
+\label{fsec:loader_disk}
+\inputminted{nasm}{./code/loader_disk.S}
+
+\section{BIOS 0x15 interrupt}
+\label{fsec:loader_15h}
+\inputminted{nasm}{./code/loader_15h.S}
+
+\section{Page}
+\label{fsec:loader_page}
+\inputminted{nasm}{./code/loader_page.S}
+
+\section{Kernel init}
+\label{fsec:kernel_init}
+\inputminted{nasm}{./code/kernel_init.S}
+
+\section{Print Put Char}
+\label{fsec:put_char}
+\inputminted{nasm}{./code/put_char.S}
+
+\section{Print Put Int}
+\label{fsec:put_int}
+\inputminted{nasm}{./code/put_int.S}
+
+\section{Interrupt}
+\label{app:int_a}
+\inputminted{nasm}{./code/int_a.S}
+
+\section{Idt Table}
+\label{app:int_b}
+\inputminted{c}{./code/idt_b.c}
+
+\section{keyboard}
+\label{sec:keyb}
+\inputminted{c}{./code/keyboard.c}
+
+\section{process}
+\label{sec:process}
+\inputminted{c}{./code/process.c}
+
+\section{Schedule}
+\label{fsec:schedule}
+\inputminted{c}{./code/schedule.c}
+
+\section{File System}
+\label{app:partitionformat}
+\inputminted{c}{./code/fs_sys.c}
+
+\section{File Create}
+\label{app:filecreate}
+\inputminted{c}{./code/fs_create.c}
+
+\section{File Open/Close}
+\label{app:fileopen}
+\inputminted{c}{./code/fs_open.c}
+
+\section{File Delete}
+\label{app:filedel}
+\inputminted{c}{./code/fs_del.c}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

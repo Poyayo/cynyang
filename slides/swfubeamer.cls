@@ -30,42 +30,37 @@ hyperref={unicode,naturalnames,%
 \RequirePackage{tabularray}%longtable
 
 %%% tikz
-% \RequirePackage{tikz}
+\RequirePackage{tikz}
 
-% \usetikzlibrary{%
-%   graphs,graphdrawing,% need lualatex
-%   calc,positioning,fit,%
-%   chains,arrows.meta,shapes,patterns,quotes,%
-%   decorations.pathmorphing,%
-%   backgrounds,scopes,%
-%   mindmap,trees,%
-%   tikzmark,%
-% }%
+\usetikzlibrary{%
+  graphs,graphdrawing,% need lualatex
+  calc,positioning,fit,%
+  chains,arrows.meta,shapes,patterns,quotes,%
+  decorations.pathmorphing,%
+  backgrounds,scopes,%
+  mindmap,trees,%
+  tikzmark,%
+}%
 
-% \tikzset{%
-%   help lines/.style = {ultra thin,dotted},%
-%   xy/.style = {font=\ttfamily\tiny,inner sep=1pt}
-% }
+\tikzset{%
+  help lines/.style = {ultra thin,dotted},%
+  xy/.style = {font=\ttfamily\tiny,inner sep=1pt}
+}
 
 %%% Fonts
 \RequirePackage{fontspec}
 \defaultfontfeatures{Ligatures=TeX}
 
+\setmainfont{Liberation Serif}
+\setsansfont{DejaVu Sans Mono}
+
 % ctex is too heavy in case of only a few Chinese words.
 % Example: {\cjk 你好}
 \newfontfamily\cjk{Noto Serif CJK JP}% \han in wx672nerd.sty
 \newfontfamily\cjksans{Noto Sans CJK JP}
-\newfontfamily\cjkmono{Noto sans Mono CJK JP} % Noto Sans Mono CJK SC
-\newfontfamily\firacode{FiraCode Nerd Font}[NFSSFamily=FiraCode] % for minted
-
-%https://tex.stackexchange.com/questions/572212/substituting-fonts-for-emojis-in-lualatex
-%https://newbedev.com/is-there-a-way-to-get-u-2114-without-china2e-in-lualatex
-\directlua{luaotfload.add_fallback
-  ("genericfallback", {"NotoSans Nerd Font:mode=node;"})}
-
-% Liberation fonts is a drop-in replacement for Microsoft Times, Arial and Courier fonts
-\setmainfont{Liberation Serif}[RawFeature={fallback=genericfallback}]
-\setsansfont{DejaVuSansMono Nerd Font}[RawFeature={fallback=genericfallback}]
+\newfontfamily\cjkmono{Noto Sans Mono CJK JP} % Noto Sans Mono CJK SC
+%\newfontfamily\firacode{FiraCode Nerd Font}[NFSSFamily=FiraCode] % for minted
+\newfontfamily\firacode{Fira Code}[NFSSFamily=FiraCode] % for minted
 
 \newcommand{\verbatimfont}[1]{\def\verbatim@font{#1}}%
 \newcommand{\verbfont}[1]{\def\verbatim@font{#1}}%
@@ -113,16 +108,7 @@ hyperref={unicode,naturalnames,%
 \newmintedfile{shell}{baselinestretch=1,linenos,breaklines,autogobble,fontfamily=FiraCode}%\shellfile{filepath}
 \newmintedfile[shfile]{shell}{baselinestretch=1,linenos,breaklines,autogobble,fontfamily=FiraCode}%\shfile{filepath}
 
-% code listing across pages
-\newenvironment{longlisting}{\captionsetup{type=listing}}{}
-
-\newenvironment{codeblock}[1] % e.g. \begin{codeblock}{.7} ... \end{codeblock}
-{\begin{center}\begin{minipage}{#1\textwidth}\begin{singlespace}}
-{\end{singlespace}\end{minipage}\end{center}}
-
 %%% hyperref
-%\RequirePackage{xcolor}
-
 \RequirePackage{hyperref}
 
 \hypersetup{unicode,naturalnames,%
@@ -146,19 +132,19 @@ hyperref={unicode,naturalnames,%
 
 %%% biblatex
 
-% \RequirePackage[backend=biber, style=gb7714-2015, gbpub=false, gbtype=false,
-% gbpunctin=false, url=false, doi=false, isbn=false]{biblatex}
-% \renewcommand*{\bibfont}{\small} % 11pt
+\RequirePackage[backend=biber, style=gb7714-2015, gbpub=false, gbtype=false,
+gbpunctin=false, url=false, doi=false, isbn=false]{biblatex}
+\renewcommand*{\bibfont}{\small} % 11pt
 
 % %https://tex.stackexchange.com/questions/23832/biblatex-make-title-hyperlink-to-doi-url-if-available
-% \newbibmacro{title+url}[1]{%
-%   \iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}}
-% \DeclareFieldFormat*{title}{\usebibmacro{title+url}{\mkbibemph{#1}}}
+\newbibmacro{title+url}[1]{%
+  \iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}}
+\DeclareFieldFormat*{title}{\usebibmacro{title+url}{\mkbibemph{#1}}}
 
-% % texdoc xurl
-% \setcounter{biburllcpenalty}{100}
-% \setcounter{biburlucpenalty}{200}
-% \setcounter{biburlnumpenalty}{100}
+% texdoc xurl
+\setcounter{biburllcpenalty}{100}
+\setcounter{biburlucpenalty}{200}
+\setcounter{biburlnumpenalty}{100}
 
 
 %%% xcolor, hyperref, pgf are loaded by beamer already. pass opts to them in
@@ -201,3 +187,13 @@ hyperref={unicode,naturalnames,%
 
 \renewcommand\emph[1]{{\itshape #1}}
 \newcommand\code[1]{{\ttfamily #1}}
+
+\titlegraphic{
+  \begin{tikzpicture}[overlay,remember picture]
+    \node at (current page.center) [scale=.21,opacity=.05]{
+      \includegraphics{swfulogo-emblem}
+      \includegraphics{swfulogo-emblem}
+      \includegraphics{swfulogo-emblem}
+    };
+  \end{tikzpicture}
+}

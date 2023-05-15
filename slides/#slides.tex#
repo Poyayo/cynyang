@@ -35,7 +35,7 @@
   \uncover<2-4> {\textit{bochs}}  & \uncover<2-4> {Bochs v2.6.9}\\
   \uncover<3-4> {\bf nasm}        & \uncover<3-4> {Nasm v2.16.01}\\
   \uncover<3-4> {\bf gcc}         & \uncover<3-4> {Gcc v12.2.0}\\
-  \uncover<4-4> {\textit{Emacs}}  & \uncover<4-4> {\small{GNU Emacs v28.2}}\\
+  \uncover<4-4> {\textit{Emacs}}  & \uncover<4-4> {\small{GNU Emacs v28.2}}\\\hline
   \uncover<4-4> {\textit{Vim}}  & \uncover<4-4> {\small{GNU Vim v0.7.2}}\\\hline
   \end{tabular}
 \end{frame}
@@ -142,6 +142,5 @@
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: t
 %%% TeX-master: t
 %%% End:

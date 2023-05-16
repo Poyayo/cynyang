@@ -3,16 +3,23 @@
 \RequirePackage{ctex} % fontspec loaded here
 %\ctexset{today=old}
 
+\usepackage{pifont}
 \usepackage{biolinum}
 \newcommand\Ctrl[1]{\LKeyCtrlX{#1}} % for Ctrl-u Ctrl-l
 
-\title{基于Linux的操作系统研究}
-
-\author{CynYang}
-
 \begin{document}
-
-\frame{\titlepage}
+\begin{frame}
+  \title{基于Linux的操作系统研究}
+  \author{杨鑫}
+  \titlepage
+  \vfill
+  \tiny{
+    \ding{70} 计算机科学与技术\\
+    \ding{41} cynyang777@gmail.com\\
+    \ding{37} 13099930449
+  }
+\end{frame}
+%\frame{\titlepage}
 
 \begin{frame}{总体设计框架}
   \begin{itemize}
@@ -137,11 +144,18 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{成果展示}
+  \begin{center}
+    \includegraphics[width=.8\linewidth]{result}
+  \end{center}
+\end{frame}
+
 \end{document}
 
 
 %%% Local Variables:
 %%% mode: latex
+%%% TeX-master: t
 %%% TeX-master: t
 %%% TeX-master: t
 %%% End:

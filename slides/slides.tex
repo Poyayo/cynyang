@@ -3,16 +3,23 @@
 \RequirePackage{ctex} % fontspec loaded here
 %\ctexset{today=old}
 
+\usepackage{pifont}
 \usepackage{biolinum}
 \newcommand\Ctrl[1]{\LKeyCtrlX{#1}} % for Ctrl-u Ctrl-l
 
-\title{基于Linux的操作系统研究}
-
-\author{CynYang}
-
 \begin{document}
-
-\frame{\titlepage}
+\begin{frame}
+  \title{基于Linux的操作系统研究}
+  \author{杨鑫}
+  \titlepage
+  \vfill
+  \tiny{
+    \ding{70} 计算机科学与技术\\
+    \ding{41} cynyang777@gmail.com\\
+    \ding{37} 13099930449
+  }
+\end{frame}
+%\frame{\titlepage}
 
 \begin{frame}{总体设计框架}
   \begin{itemize}
@@ -35,7 +42,7 @@
   \uncover<2-4> {\textit{bochs}}  & \uncover<2-4> {Bochs v2.6.9}\\
   \uncover<3-4> {\bf nasm}        & \uncover<3-4> {Nasm v2.16.01}\\
   \uncover<3-4> {\bf gcc}         & \uncover<3-4> {Gcc v12.2.0}\\
-  \uncover<4-4> {\textit{Emacs}}  & \uncover<4-4> {\small{GNU Emacs v28.2}}\\\hline
+  \uncover<4-4> {\textit{Emacs}}  & \uncover<4-4> {\small{GNU Emacs v28.2}}\\
   \uncover<4-4> {\textit{Vim}}  & \uncover<4-4> {\small{GNU Vim v0.7.2}}\\\hline
   \end{tabular}
 \end{frame}
@@ -137,16 +144,18 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{成果展示}
+  \begin{center}
+    \includegraphics[width=.8\linewidth]{result}
+  \end{center}
+\end{frame}
+
 \end{document}
+
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
-<<<<<<< HEAD
-%%% TeX-master: "slides"
 %%% TeX-master: t
 %%% TeX-master: t
-%%% TeX-master: t
-=======
->>>>>>> 92e5ffe9fe08e726179bbc335991724c6bfba02a
 %%% End:

@@ -1,0 +1,104 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cp}{\PYGZsh{}define	KB\PYGZus{}IN\PYGZus{}BYTES	32	}\PYG{c+cm}{/* size of keyboard input buffer */}
+\PYG{c+cp}{\PYGZsh{}define MAP\PYGZus{}COLS	3	}\PYG{c+cm}{/* Number of columns in keymap */}
+\PYG{c+cp}{\PYGZsh{}define NR\PYGZus{}SCAN\PYGZus{}CODES	0x80	}\PYG{c+cm}{/* Number of scan codes (rows in keymap) */}
+
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}BREAK	0x0080		}\PYG{c+cm}{/* Break Code			*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}EXT	0x0100		}\PYG{c+cm}{/* Normal function keys		*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}SHIFT\PYGZus{}L	0x0200		}\PYG{c+cm}{/* Shift key			*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}SHIFT\PYGZus{}R	0x0400		}\PYG{c+cm}{/* Shift key			*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}CTRL\PYGZus{}L	0x0800		}\PYG{c+cm}{/* Control key			*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}CTRL\PYGZus{}R	0x1000		}\PYG{c+cm}{/* Control key			*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}ALT\PYGZus{}L	0x2000		}\PYG{c+cm}{/* Alternate key		*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}ALT\PYGZus{}R	0x4000		}\PYG{c+cm}{/* Alternate key		*/}
+\PYG{c+cp}{\PYGZsh{}define FLAG\PYGZus{}PAD	0x8000		}\PYG{c+cm}{/* keys in num pad		*/}
+
+\PYG{c+cp}{\PYGZsh{}define MASK\PYGZus{}RAW	0x01FF		}\PYG{c+cm}{/* raw key value = code passed to tty \PYGZam{} MASK\PYGZus{}RAW}
+\PYG{c+cm}{					   the value can be found either in the keymap column 0}
+\PYG{c+cm}{					   or in the list below */}
+
+\PYG{c+cm}{/* Special keys */}
+\PYG{c+cp}{\PYGZsh{}define ESC		(0x01 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Esc		*/}
+\PYG{c+cp}{\PYGZsh{}define TAB		(0x02 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Tab		*/}
+\PYG{c+cp}{\PYGZsh{}define ENTER		(0x03 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Enter	*/}
+\PYG{c+cp}{\PYGZsh{}define BACKSPACE	(0x04 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* BackSpace	*/}
+
+\PYG{c+cp}{\PYGZsh{}define GUI\PYGZus{}L		(0x05 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* L GUI	*/}
+\PYG{c+cp}{\PYGZsh{}define GUI\PYGZus{}R		(0x06 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* R GUI	*/}
+\PYG{c+cp}{\PYGZsh{}define APPS		(0x07 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* APPS	*/}
+
+\PYG{c+cm}{/* Shift, Ctrl, Alt */}
+\PYG{c+cp}{\PYGZsh{}define SHIFT\PYGZus{}L		(0x08 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* L Shift	*/}
+\PYG{c+cp}{\PYGZsh{}define SHIFT\PYGZus{}R		(0x09 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* R Shift	*/}
+\PYG{c+cp}{\PYGZsh{}define CTRL\PYGZus{}L		(0x0A + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* L Ctrl	*/}
+\PYG{c+cp}{\PYGZsh{}define CTRL\PYGZus{}R		(0x0B + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* R Ctrl	*/}
+\PYG{c+cp}{\PYGZsh{}define ALT\PYGZus{}L		(0x0C + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* L Alt	*/}
+\PYG{c+cp}{\PYGZsh{}define ALT\PYGZus{}R		(0x0D + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* R Alt	*/}
+
+\PYG{c+cm}{/* Lock keys */}
+\PYG{c+cp}{\PYGZsh{}define CAPS\PYGZus{}LOCK	(0x0E + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Caps Lock	*/}
+\PYG{c+cp}{\PYGZsh{}define	NUM\PYGZus{}LOCK	(0x0F + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Number Lock	*/}
+\PYG{c+cp}{\PYGZsh{}define SCROLL\PYGZus{}LOCK	(0x10 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Scroll Lock	*/}
+
+\PYG{c+cm}{/* Function keys */}
+\PYG{c+cp}{\PYGZsh{}define F1		(0x11 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F1		*/}
+\PYG{c+cp}{\PYGZsh{}define F2		(0x12 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F2		*/}
+\PYG{c+cp}{\PYGZsh{}define F3		(0x13 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F3		*/}
+\PYG{c+cp}{\PYGZsh{}define F4		(0x14 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F4		*/}
+\PYG{c+cp}{\PYGZsh{}define F5		(0x15 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F5		*/}
+\PYG{c+cp}{\PYGZsh{}define F6		(0x16 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F6		*/}
+\PYG{c+cp}{\PYGZsh{}define F7		(0x17 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F7		*/}
+\PYG{c+cp}{\PYGZsh{}define F8		(0x18 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F8		*/}
+\PYG{c+cp}{\PYGZsh{}define F9		(0x19 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F9		*/}
+\PYG{c+cp}{\PYGZsh{}define F10		(0x1A + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F10		*/}
+\PYG{c+cp}{\PYGZsh{}define F11		(0x1B + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F11		*/}
+\PYG{c+cp}{\PYGZsh{}define F12		(0x1C + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* F12		*/}
+
+\PYG{c+cm}{/* Control Pad */}
+\PYG{c+cp}{\PYGZsh{}define PRINTSCREEN	(0x1D + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Print Screen	*/}
+\PYG{c+cp}{\PYGZsh{}define PAUSEBREAK	(0x1E + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Pause/Break	*/}
+\PYG{c+cp}{\PYGZsh{}define INSERT		(0x1F + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Insert	*/}
+\PYG{c+cp}{\PYGZsh{}define DELETE		(0x20 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Delete	*/}
+\PYG{c+cp}{\PYGZsh{}define HOME		(0x21 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Home		*/}
+\PYG{c+cp}{\PYGZsh{}define END		(0x22 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* End		*/}
+\PYG{c+cp}{\PYGZsh{}define PAGEUP		(0x23 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Page Up	*/}
+\PYG{c+cp}{\PYGZsh{}define PAGEDOWN	(0x24 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Page Down	*/}
+\PYG{c+cp}{\PYGZsh{}define UP		(0x25 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Up		*/}
+\PYG{c+cp}{\PYGZsh{}define DOWN		(0x26 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Down		*/}
+\PYG{c+cp}{\PYGZsh{}define LEFT		(0x27 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Left		*/}
+\PYG{c+cp}{\PYGZsh{}define RIGHT		(0x28 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Right	*/}
+
+\PYG{c+cm}{/* ACPI keys */}
+\PYG{c+cp}{\PYGZsh{}define POWER		(0x29 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Power	*/}
+\PYG{c+cp}{\PYGZsh{}define SLEEP		(0x2A + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Sleep	*/}
+\PYG{c+cp}{\PYGZsh{}define WAKE		(0x2B + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Wake Up	*/}
+
+\PYG{c+cm}{/* Num Pad */}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}SLASH	(0x2C + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* /		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}STAR	(0x2D + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* *		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}MINUS	(0x2E + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* \PYGZhy{}		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}PLUS	(0x2F + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* +		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}ENTER	(0x30 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* Enter	*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}DOT		(0x31 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* .		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}0		(0x32 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 0		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}1		(0x33 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 1		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}2		(0x34 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 2		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}3		(0x35 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 3		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}4		(0x36 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 4		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}5		(0x37 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 5		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}6		(0x38 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 6		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}7		(0x39 + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 7		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}8		(0x3A + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 8		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}9		(0x3B + FLAG\PYGZus{}EXT)	}\PYG{c+cm}{/* 9		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}UP		PAD\PYGZus{}8			}\PYG{c+cm}{/* Up		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}DOWN	PAD\PYGZus{}2			}\PYG{c+cm}{/* Down		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}LEFT	PAD\PYGZus{}4			}\PYG{c+cm}{/* Left		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}RIGHT	PAD\PYGZus{}6			}\PYG{c+cm}{/* Right	*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}HOME	PAD\PYGZus{}7			}\PYG{c+cm}{/* Home		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}END		PAD\PYGZus{}1			}\PYG{c+cm}{/* End		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}PAGEUP	PAD\PYGZus{}9			}\PYG{c+cm}{/* Page Up	*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}PAGEDOWN	PAD\PYGZus{}3			}\PYG{c+cm}{/* Page Down	*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}INS		PAD\PYGZus{}0			}\PYG{c+cm}{/* Ins		*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}MID		PAD\PYGZus{}5			}\PYG{c+cm}{/* Middle key	*/}
+\PYG{c+cp}{\PYGZsh{}define PAD\PYGZus{}DEL		PAD\PYGZus{}DOT			}\PYG{c+cm}{/* Del		*/}
+\end{Verbatim}

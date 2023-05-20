@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{pathname}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}
+\PYG{+w}{   }\PYG{p}{\PYGZob{}}\PYG{+w}{	}
+\PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{NULL}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{getcwd}\PYG{p}{(}\PYG{n}{final\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}PATH\PYGZus{}LEN}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{	 }\PYG{n}{pathname}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}path}\PYG{p}{;}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{	 }\PYG{n}{printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}ls: getcwd for default path failed}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{	 }\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{make\PYGZus{}clear\PYGZus{}abs\PYGZus{}path}\PYG{p}{(}\PYG{n}{pathname}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{final\PYGZus{}path}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{pathname}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}path}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

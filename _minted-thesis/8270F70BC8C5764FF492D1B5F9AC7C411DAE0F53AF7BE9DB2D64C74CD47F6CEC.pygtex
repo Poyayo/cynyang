@@ -1,0 +1,16 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{inode\PYGZus{}init}\PYG{p}{(}\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{new\PYGZus{}inode}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{n}{new\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{new\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{new\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}open\PYGZus{}cnts}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{new\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{write\PYGZus{}deny}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 初始化块索引数组i\PYGZus{}sector */}
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{sec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sec\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{13}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{c+cm}{/* i\PYGZus{}sectors[12]为一级间接块地址 */}
+\PYG{+w}{      }\PYG{n}{new\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}sectors}\PYG{p}{[}\PYG{n}{sec\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{      }\PYG{n}{sec\PYGZus{}idx}\PYG{o}{++}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

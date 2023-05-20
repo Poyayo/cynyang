@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+no}{LOADER\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{ }\PYG{k+kd}{equ}\PYG{+w}{ }\PYG{l+m+mh}{0x900}\PYG{+w}{   }\PYG{c+c1}{;equ是nasm的提供的伪指令，意为equal,}
+\PYG{+w}{                             }\PYG{c+c1}{;用于给表达式起个意义更明确的符号名}
+\end{Verbatim}

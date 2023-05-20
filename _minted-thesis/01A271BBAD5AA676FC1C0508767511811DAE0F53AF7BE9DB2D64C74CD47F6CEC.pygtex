@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{case}\PYG{+w}{ }\PYG{l+s+sc}{\PYGZsq{}u\PYGZsq{}}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+s+sc}{\PYGZsq{}a\PYGZsq{}}\PYG{p}{:}
+\PYG{+w}{   }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{buf}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{pos}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{putchar}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}b\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{o}{*}\PYG{p}{(}\PYG{n}{pos}\PYG{o}{\PYGZhy{}\PYGZhy{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{k}{break}\PYG{p}{;}
+\end{Verbatim}

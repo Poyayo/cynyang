@@ -1,0 +1,152 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{global}\PYG{+w}{ }\PYG{n+nv}{put\PYGZus{}char}
+\PYG{n+nl}{put\PYGZus{}char:}
+\PYG{+w}{   }\PYG{n+nf}{pushad}\PYG{+w}{	   }\PYG{c+c1}{;备份32位寄存器环境}
+\PYG{+w}{   }\PYG{c+c1}{;需要保证gs中为正确的视频段选择子,为保险起见,每次打印时都为gs赋值}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{SELECTOR\PYGZus{}VIDEO}\PYG{+w}{	       }\PYG{c+c1}{; 不能直接把立即数送入段寄存器}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{gs}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}
+
+\PYG{c+c1}{;;;;;;;;;  获取当前光标位置 ;;;;;;;;;}
+\PYG{+w}{   }\PYG{c+c1}{;先获得高8位}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}\PYG{+w}{  }\PYG{c+c1}{;索引寄存器}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0e}\PYG{+w}{	   }\PYG{c+c1}{;用于提供光标位置的高8位}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{  }\PYG{c+c1}{;通过读写数据端口0x3d5来获得或设置光标位置 }
+\PYG{+w}{   }\PYG{n+nf}{in}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{+w}{	   }\PYG{c+c1}{;得到了光标位置的高8位}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ah}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+
+\PYG{+w}{   }\PYG{c+c1}{;再获取低8位}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0f}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{in}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{dx}
+
+\PYG{+w}{   }\PYG{c+c1}{;将光标存入bx}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{+w}{	  }
+\PYG{+w}{   }\PYG{c+c1}{;下面这行是在栈中获取待打印的字符}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{esp}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{36}\PYG{p}{]}\PYG{+w}{	      }\PYG{c+c1}{;pushad压入4×8＝32字节,加上主调函数的返回地址4字节,故esp+36字节}
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{n+nb}{cl}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0xd}\PYG{+w}{				  }\PYG{c+c1}{;CR是0x0d,LF是0x0a}
+\PYG{+w}{   }\PYG{n+nf}{jz}\PYG{+w}{ }\PYG{n+nv}{.is\PYGZus{}carriage\PYGZus{}return}
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{n+nb}{cl}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0xa}
+\PYG{+w}{   }\PYG{n+nf}{jz}\PYG{+w}{ }\PYG{n+nv}{.is\PYGZus{}line\PYGZus{}feed}
+
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{n+nb}{cl}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x8}\PYG{+w}{				  }\PYG{c+c1}{;BS(backspace)的asc码是8}
+\PYG{+w}{   }\PYG{n+nf}{jz}\PYG{+w}{ }\PYG{n+nv}{.is\PYGZus{}backspace}
+\PYG{+w}{   }\PYG{n+nf}{jmp}\PYG{+w}{ }\PYG{n+nv}{.put\PYGZus{}other}\PYG{+w}{	   }
+\PYG{c+c1}{;;;;;;;;;;;;;;;;;;}
+
+\PYG{+w}{ }\PYG{n+nl}{.is\PYGZus{}backspace:}\PYG{+w}{		      }
+\PYG{c+c1}{;;;;;;;;;;;;       backspace的一点说明	     ;;;;;;;;;;}
+\PYG{c+c1}{; 当为backspace时,本质上只要将光标移向前一个显存位置即可.后面再输入的字符自然会覆盖此处的字符}
+\PYG{c+c1}{; 但有可能在键入backspace后并不再键入新的字符,这时在光标已经向前移动到待删除的字符位置,但字符还在原处,}
+\PYG{c+c1}{; 这就显得好怪异,所以此处添加了空格或空字符0}
+\PYG{+w}{   }\PYG{n+nf}{dec}\PYG{+w}{ }\PYG{n+nb}{bx}
+\PYG{+w}{   }\PYG{n+nf}{shl}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{l+m+mi}{1}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{k+kt}{byte}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{bx}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0x20}\PYG{+w}{		  }\PYG{c+c1}{;将待删除的字节补为0或空格皆可}
+\PYG{+w}{   }\PYG{n+nf}{inc}\PYG{+w}{ }\PYG{n+nb}{bx}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{k+kt}{byte}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{bx}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0x07}
+\PYG{+w}{   }\PYG{n+nf}{shr}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{l+m+mi}{1}
+\PYG{+w}{   }\PYG{n+nf}{jmp}\PYG{+w}{ }\PYG{n+nv}{.set\PYGZus{}cursor}
+\PYG{c+c1}{;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;}
+
+\PYG{+w}{ }\PYG{n+nl}{.put\PYGZus{}other:}
+\PYG{+w}{   }\PYG{n+nf}{shl}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{				  }\PYG{c+c1}{; 光标位置是用2字节表示,将光标值乘2,表示对应显存中的偏移字节}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{bx}\PYG{p}{],}\PYG{+w}{ }\PYG{n+nb}{cl}\PYG{+w}{			  }\PYG{c+c1}{; ascii字符本身}
+\PYG{+w}{   }\PYG{n+nf}{inc}\PYG{+w}{ }\PYG{n+nb}{bx}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{k+kt}{byte}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{bx}\PYG{p}{],}\PYG{l+m+mh}{0x07}\PYG{+w}{		  }\PYG{c+c1}{; 字符属性}
+\PYG{+w}{   }\PYG{n+nf}{shr}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{				  }\PYG{c+c1}{; 恢复老的光标值}
+\PYG{+w}{   }\PYG{n+nf}{inc}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{+w}{				  }\PYG{c+c1}{; 下一个光标值}
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2000}\PYG{+w}{		   }
+\PYG{+w}{   }\PYG{n+nf}{jl}\PYG{+w}{ }\PYG{n+nv}{.set\PYGZus{}cursor}\PYG{+w}{			  }\PYG{c+c1}{; 若光标值小于2000,表示未写到显存的最后,则去设置新的光标值}
+\PYG{+w}{					  }\PYG{c+c1}{; 若超出屏幕字符数大小(2000)则换行处理}
+\PYG{+w}{ }\PYG{n+nl}{.is\PYGZus{}line\PYGZus{}feed:}\PYG{+w}{				  }\PYG{c+c1}{; 是换行符LF(\PYGZbs{}n)}
+\PYG{+w}{ }\PYG{n+nl}{.is\PYGZus{}carriage\PYGZus{}return:}\PYG{+w}{			  }\PYG{c+c1}{; 是回车符CR(\PYGZbs{}r)}
+\PYG{+w}{					  }\PYG{c+c1}{; 如果是CR(\PYGZbs{}r),只要把光标移到行首就行了。}
+\PYG{+w}{   }\PYG{n+nf}{xor}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{+w}{				  }\PYG{c+c1}{; dx是被除数的高16位,清0.}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{+w}{				  }\PYG{c+c1}{; ax是被除数的低16位.}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{si}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{+w}{				  }\PYG{c+c1}{; 由于是效仿linux，linux中\PYGZbs{}n便表示下一行的行首，所以本系统中，}
+\PYG{+w}{   }\PYG{n+nf}{div}\PYG{+w}{ }\PYG{n+nb}{si}\PYG{+w}{				  }\PYG{c+c1}{; 把\PYGZbs{}n和\PYGZbs{}r都处理为linux中\PYGZbs{}n的意思，也就是下一行的行首。}
+\PYG{+w}{   }\PYG{n+nf}{sub}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{+w}{				  }\PYG{c+c1}{; 光标值减去除80的余数便是取整}
+\PYG{+w}{					  }\PYG{c+c1}{; 以上4行处理\PYGZbs{}r的代码}
+
+\PYG{+w}{ }\PYG{n+nl}{.is\PYGZus{}carriage\PYGZus{}return\PYGZus{}end:}\PYG{+w}{                 }\PYG{c+c1}{; 回车符CR处理结束}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{80}
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2000}
+\PYG{+w}{ }\PYG{n+nl}{.is\PYGZus{}line\PYGZus{}feed\PYGZus{}end:}\PYG{+w}{			  }\PYG{c+c1}{; 若是LF(\PYGZbs{}n),将光标移+80便可。  }
+\PYG{+w}{   }\PYG{n+nf}{jl}\PYG{+w}{ }\PYG{n+nv}{.set\PYGZus{}cursor}
+
+\PYG{c+c1}{;屏幕行范围是0\PYGZti{}24,滚屏的原理是将屏幕的1\PYGZti{}24行搬运到0\PYGZti{}23行,再将第24行用空格填充}
+\PYG{+w}{ }\PYG{n+nl}{.roll\PYGZus{}screen:}\PYG{+w}{				  }\PYG{c+c1}{; 若超出屏幕大小，开始滚屏}
+\PYG{+w}{   }\PYG{n+nf}{cld}\PYG{+w}{  }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{960}\PYG{+w}{				  }\PYG{c+c1}{; 一共有2000\PYGZhy{}80=1920个字符要搬运,共1920*2=3840字节.一次搬4字节,共3840/4=960次 }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{esi}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0xc00b80a0}\PYG{+w}{			  }\PYG{c+c1}{; 第1行行首}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{edi}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0xc00b8000}\PYG{+w}{			  }\PYG{c+c1}{; 第0行行首}
+\PYG{+w}{   }\PYG{n+nf}{rep}\PYG{+w}{ }\PYG{n+nv}{movsd}\PYG{+w}{				  }
+
+\PYG{c+c1}{;;;;;;;将最后一行填充为空白}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{3840}\PYG{+w}{			  }\PYG{c+c1}{; 最后一行首字符的第一个字节偏移= 1920 * 2}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{+w}{				  }\PYG{c+c1}{;一行是80字符(160字节),每次清理1字符(2字节),一行需要移动80次}
+\PYG{+w}{ }\PYG{n+nl}{.cls:}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{k+kt}{word}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{ebx}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0x0720}\PYG{+w}{		  }\PYG{c+c1}{;0x0720是黑底白字的空格键}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}
+\PYG{+w}{   }\PYG{n+nf}{loop}\PYG{+w}{ }\PYG{n+nv}{.cls}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{l+m+mi}{1920}\PYG{+w}{				  }\PYG{c+c1}{;将光标值重置为1920,最后一行的首字符.}
+
+\PYG{+w}{ }\PYG{n+nl}{.set\PYGZus{}cursor:}\PYG{+w}{   }
+\PYG{+w}{					  }\PYG{c+c1}{;将光标设为bx值}
+\PYG{c+c1}{;;;;;;; 1 先设置高8位 ;;;;;;;;}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}\PYG{+w}{			  }\PYG{c+c1}{;索引寄存器}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0e}\PYG{+w}{				  }\PYG{c+c1}{;用于提供光标位置的高8位}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{			  }\PYG{c+c1}{;通过读写数据端口0x3d5来获得或设置光标位置 }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{bh}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+
+\PYG{c+c1}{;;;;;;; 2 再设置低8位 ;;;;;;;;;}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0f}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{bl}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{ }\PYG{n+nl}{.put\PYGZus{}char\PYGZus{}done:}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{popad}
+\PYG{+w}{   }\PYG{n+nf}{ret}
+
+\PYG{k}{global}\PYG{+w}{ }\PYG{n+nv}{cls\PYGZus{}screen}
+\PYG{n+nl}{cls\PYGZus{}screen:}
+\PYG{+w}{   }\PYG{n+nf}{pushad}
+\PYG{+w}{   }\PYG{c+c1}{;;;;;;;;;;;;;;;}
+\PYG{+w}{	}\PYG{c+c1}{; 由于用户程序的cpl为3,显存段的dpl为0,故用于显存段的选择子gs在低于自己特权的环境中为0,}
+\PYG{+w}{	}\PYG{c+c1}{; 导致用户程序再次进入中断后,gs为0,故直接在put\PYGZus{}str中每次都为gs赋值. }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{SELECTOR\PYGZus{}VIDEO}\PYG{+w}{	       }\PYG{c+c1}{; 不能直接把立即数送入gs,须由ax中转}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{gs}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}
+
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{o}{*}\PYG{l+m+mi}{25}
+\PYG{+w}{ }\PYG{n+nl}{.cls:}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{k+kt}{word}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{gs}\PYG{p}{:}\PYG{n+nb}{ebx}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0x0720}\PYG{+w}{		  }\PYG{c+c1}{;0x0720是黑底白字的空格键}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}
+\PYG{+w}{   }\PYG{n+nf}{loop}\PYG{+w}{ }\PYG{n+nv}{.cls}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}
+
+\PYG{+w}{ }\PYG{n+nl}{.set\PYGZus{}cursor:}\PYG{+w}{				  }\PYG{c+c1}{;直接把set\PYGZus{}cursor搬过来用,省事}
+\PYG{c+c1}{;;;;;;; 1 先设置高8位 ;;;;;;;;}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}\PYG{+w}{			  }\PYG{c+c1}{;索引寄存器}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0e}\PYG{+w}{				  }\PYG{c+c1}{;用于提供光标位置的高8位}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{			  }\PYG{c+c1}{;通过读写数据端口0x3d5来获得或设置光标位置 }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{bh}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+
+\PYG{c+c1}{;;;;;;; 2 再设置低8位 ;;;;;;;;;}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d4}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0f}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x03d5}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{bl}
+\PYG{+w}{   }\PYG{n+nf}{out}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{al}
+\PYG{+w}{   }\PYG{n+nf}{popad}
+\PYG{+w}{   }\PYG{n+nf}{ret}
+\end{Verbatim}

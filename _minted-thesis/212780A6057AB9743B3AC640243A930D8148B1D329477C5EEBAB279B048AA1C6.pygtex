@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nl}{intr\PYGZus{}exit:}\PYG{+w}{	}
+\PYG{c+c1}{; 以下是恢复上下文环境}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{esp}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{+w}{ }\PYG{c+c1}{; 跳过中断号}
+\PYG{+w}{   }\PYG{n+nf}{popad}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{gs}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{fs}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{es}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{ds}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{esp}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{+w}{ }\PYG{c+c1}{; 跳过error\PYGZus{}code}
+\PYG{+w}{   }\PYG{n+nf}{iretd}
+\end{Verbatim}

@@ -1,0 +1,122 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/* 格式化分区,也就是初始化分区的元信息,创建文件系统 */}
+\PYG{k}{static}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{partition\PYGZus{}format}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{partition}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{part}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{c+cm}{/* 为方便实现,一个块大小是一扇区 */}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{boot\PYGZus{}sector\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{	  }
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{super\PYGZus{}block\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{DIV\PYGZus{}ROUND\PYGZus{}UP}\PYG{p}{(}\PYG{n}{MAX\PYGZus{}FILES\PYGZus{}PER\PYGZus{}PART}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BITS\PYGZus{}PER\PYGZus{}SECTOR}\PYG{p}{);}\PYG{+w}{	   }\PYG{c+c1}{// I结点位图占用的扇区数.最多支持4096个文件}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{DIV\PYGZus{}ROUND\PYGZus{}UP}\PYG{p}{(((}\PYG{k}{sizeof}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}FILES\PYGZus{}PER\PYGZus{}PART}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{SECTOR\PYGZus{}SIZE}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{used\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{boot\PYGZus{}sector\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{super\PYGZus{}block\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{free\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{sec\PYGZus{}cnt}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{used\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{  }
+
+\PYG{c+cm}{/************** 简单处理块位图占据的扇区数 ***************/}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{DIV\PYGZus{}ROUND\PYGZus{}UP}\PYG{p}{(}\PYG{n}{free\PYGZus{}sects}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BITS\PYGZus{}PER\PYGZus{}SECTOR}\PYG{p}{);}
+\PYG{+w}{   }\PYG{c+cm}{/* block\PYGZus{}bitmap\PYGZus{}bit\PYGZus{}len是位图中位的长度,也是可用块的数量 */}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}bit\PYGZus{}len}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{free\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{DIV\PYGZus{}ROUND\PYGZus{}UP}\PYG{p}{(}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}bit\PYGZus{}len}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BITS\PYGZus{}PER\PYGZus{}SECTOR}\PYG{p}{);}\PYG{+w}{ }
+\PYG{c+cm}{/*********************************************************/}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 超级块初始化 */}
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{super\PYGZus{}block}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{magic}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mh}{0x19590318}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{sec\PYGZus{}cnt}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{sec\PYGZus{}cnt}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}cnt}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}FILES\PYGZus{}PER\PYGZus{}PART}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{part\PYGZus{}lba\PYGZus{}base}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{start\PYGZus{}lba}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{part\PYGZus{}lba\PYGZus{}base}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{	 }\PYG{c+c1}{// 第0块是引导块,第1块是超级块}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{ }
+
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{root\PYGZus{}inode\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{dir\PYGZus{}entry\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{sizeof}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir\PYGZus{}entry}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZpc{}s info:}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{name}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}   magic:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   part\PYGZus{}lba\PYGZus{}base:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   all\PYGZus{}sectors:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   inode\PYGZus{}cnt:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   block\PYGZus{}bitmap\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   block\PYGZus{}bitmap\PYGZus{}sectors:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   inode\PYGZus{}bitmap\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   inode\PYGZus{}bitmap\PYGZus{}sectors:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   inode\PYGZus{}table\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   inode\PYGZus{}table\PYGZus{}sectors:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{   data\PYGZus{}start\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{magic}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{part\PYGZus{}lba\PYGZus{}base}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{sec\PYGZus{}cnt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}cnt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{disk}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{hd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{my\PYGZus{}disk}\PYG{p}{;}
+\PYG{c+cm}{/*******************************}
+\PYG{c+cm}{ * 1 将超级块写入本分区的1扇区 *}
+\PYG{c+cm}{ ******************************/}
+\PYG{+w}{   }\PYG{n}{ide\PYGZus{}write}\PYG{p}{(}\PYG{n}{hd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{start\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{sb}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}   super\PYGZus{}block\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{start\PYGZus{}lba}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{c+cm}{/* 找出数据量最大的元信息,用其尺寸做存储缓冲区*/}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{buf\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{buf\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{buf\PYGZus{}size}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{n}{buf\PYGZus{}size}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{SECTOR\PYGZus{}SIZE}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{buf}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{uint8\PYGZus{}t}\PYG{o}{*}\PYG{p}{)}\PYG{n}{sys\PYGZus{}malloc}\PYG{p}{(}\PYG{n}{buf\PYGZus{}size}\PYG{p}{);}\PYG{+w}{	}\PYG{c+c1}{// 申请的内存由内存管理系统清0后返回}
+
+\PYG{c+cm}{/**************************************}
+\PYG{c+cm}{ * 2 将块位图初始化并写入sb.block\PYGZus{}bitmap\PYGZus{}lba *}
+\PYG{c+cm}{ *************************************/}
+\PYG{+w}{   }\PYG{c+cm}{/* 初始化块位图block\PYGZus{}bitmap */}
+\PYG{+w}{   }\PYG{n}{buf}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{|=}\PYG{+w}{ }\PYG{l+m+mh}{0x01}\PYG{p}{;}\PYG{+w}{       }\PYG{c+c1}{// 第0个块预留给根目录,位图中先占位}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}byte}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}bit\PYGZus{}len}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{  }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}bit}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}bit\PYGZus{}len}\PYG{+w}{ }\PYG{o}{\PYGZpc{}}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{last\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SECTOR\PYGZus{}SIZE}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}byte}\PYG{+w}{ }\PYG{o}{\PYGZpc{}}\PYG{+w}{ }\PYG{n}{SECTOR\PYGZus{}SIZE}\PYG{p}{);}\PYG{+w}{	     }\PYG{c+c1}{// last\PYGZus{}size是位图所在最后一个扇区中，不足一扇区的其余部分}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 1 先将位图最后一字节到其所在的扇区的结束全置为1,即超出实际块数的部分直接置为已占用*/}
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{buf}\PYG{p}{[}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}byte}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0xff}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last\PYGZus{}size}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 2 再将上一步中覆盖的最后一字节内的有效位重新置0 */}
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{bit\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{bit\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}bit}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{buf}\PYG{p}{[}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}last\PYGZus{}byte}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZam{}=}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{bit\PYGZus{}idx}\PYG{o}{++}\PYG{p}{);}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{n}{ide\PYGZus{}write}\PYG{p}{(}\PYG{n}{hd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{);}
+
+\PYG{c+cm}{/***************************************}
+\PYG{c+cm}{ * 3 将inode位图初始化并写入sb.inode\PYGZus{}bitmap\PYGZus{}lba *}
+\PYG{c+cm}{ ***************************************/}
+\PYG{+w}{   }\PYG{c+cm}{/* 先清空缓冲区*/}
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf\PYGZus{}size}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{buf}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{|=}\PYG{+w}{ }\PYG{l+m+mh}{0x1}\PYG{p}{;}\PYG{+w}{      }\PYG{c+c1}{// 第0个inode分给了根目录}
+\PYG{+w}{   }\PYG{c+cm}{/* 由于inode\PYGZus{}table中共4096个inode,位图inode\PYGZus{}bitmap正好占用1扇区,}
+\PYG{c+cm}{    * 即inode\PYGZus{}bitmap\PYGZus{}sects等于1, 所以位图中的位全都代表inode\PYGZus{}table中的inode,}
+\PYG{c+cm}{    * 无须再像block\PYGZus{}bitmap那样单独处理最后一扇区的剩余部分,}
+\PYG{c+cm}{    * inode\PYGZus{}bitmap所在的扇区中没有多余的无效位 */}
+\PYG{+w}{   }\PYG{n}{ide\PYGZus{}write}\PYG{p}{(}\PYG{n}{hd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{);}
+
+\PYG{c+cm}{/***************************************}
+\PYG{c+cm}{ * 4 将inode数组初始化并写入sb.inode\PYGZus{}table\PYGZus{}lba *}
+\PYG{c+cm}{ ***************************************/}
+\PYG{+w}{ }\PYG{c+cm}{/* 准备写inode\PYGZus{}table中的第0项,即根目录所在的inode */}
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf\PYGZus{}size}\PYG{p}{);}\PYG{+w}{  }\PYG{c+c1}{// 先清空缓冲区buf}
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{o}{*}\PYG{p}{)}\PYG{n}{buf}\PYG{p}{;}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{n}{i}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{dir\PYGZus{}entry\PYGZus{}size}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{	 }\PYG{c+c1}{// .和..}
+\PYG{+w}{   }\PYG{n}{i}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// 根目录占inode数组中第0个inode}
+\PYG{+w}{   }\PYG{n}{i}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}sectors}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{p}{;}\PYG{+w}{	     }\PYG{c+c1}{// 由于上面的memset,i\PYGZus{}sectors数组的其它元素都初始化为0 }
+\PYG{+w}{   }\PYG{n}{ide\PYGZus{}write}\PYG{p}{(}\PYG{n}{hd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{);}
+
+\PYG{c+cm}{/***************************************}
+\PYG{c+cm}{ * 5 将根目录初始化并写入sb.data\PYGZus{}start\PYGZus{}lba}
+\PYG{c+cm}{ ***************************************/}
+\PYG{+w}{   }\PYG{c+cm}{/* 写入根目录的两个目录项.和.. */}
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf\PYGZus{}size}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir\PYGZus{}entry}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p\PYGZus{}de}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir\PYGZus{}entry}\PYG{o}{*}\PYG{p}{)}\PYG{n}{buf}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 初始化当前目录\PYGZdq{}.\PYGZdq{} */}
+\PYG{+w}{   }\PYG{n}{memcpy}\PYG{p}{(}\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}.\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{f\PYGZus{}type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{FT\PYGZus{}DIRECTORY}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{p\PYGZus{}de}\PYG{o}{++}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 初始化当前目录父目录\PYGZdq{}..\PYGZdq{} */}
+\PYG{+w}{   }\PYG{n}{memcpy}\PYG{p}{(}\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}..\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// 根目录的父目录依然是根目录自己}
+\PYG{+w}{   }\PYG{n}{p\PYGZus{}de}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{f\PYGZus{}type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{FT\PYGZus{}DIRECTORY}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{c+cm}{/* sb.data\PYGZus{}start\PYGZus{}lba已经分配给了根目录,里面是根目录的目录项 */}
+\PYG{+w}{   }\PYG{n}{ide\PYGZus{}write}\PYG{p}{(}\PYG{n}{hd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}   root\PYGZus{}dir\PYGZus{}lba:0x\PYGZpc{}x}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sb}\PYG{p}{.}\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZpc{}s format done}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{name}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{sys\PYGZus{}free}\PYG{p}{(}\PYG{n}{buf}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

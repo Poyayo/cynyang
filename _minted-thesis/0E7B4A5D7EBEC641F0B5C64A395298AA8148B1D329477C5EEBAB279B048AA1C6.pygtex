@@ -1,0 +1,27 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }\PYG{k}{org}\PYG{+w}{ }\PYG{l+m+mh}{07c00h}\PYG{+w}{          }\PYG{c+c1}{; 告诉编译器程序加载到7c00处}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{cs}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ds}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{es}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ah}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x6}\PYG{+w}{         }\PYG{c+c1}{; 利用0x60号功能清屏}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{al}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0}\PYG{+w}{         }\PYG{c+c1}{; AL = 上卷的行数（0表示全部）}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x700}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x0}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x184f}
+\PYG{+w}{    }\PYG{n+nf}{int}\PYG{+w}{ }\PYG{l+m+mh}{10h}
+\PYG{+w}{    }\PYG{n+nf}{call}\PYG{+w}{ }\PYG{n+nv}{DispStr}\PYG{+w}{        }\PYG{c+c1}{; 调用显示字符串例程}
+\PYG{+w}{    }\PYG{n+nf}{jmp}\PYG{+w}{ }\PYG{k+kc}{\PYGZdl{}}\PYG{+w}{               }\PYG{c+c1}{; 无限循环}
+\PYG{n+nl}{DispStr:}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{BootMessage}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{bp}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{+w}{          }\PYG{c+c1}{; ES:BP = 串地址}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{16}\PYG{+w}{          }\PYG{c+c1}{; CX = 串长度}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ax}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{01301h}\PYG{+w}{      }\PYG{c+c1}{; AH = 13,  AL = 01h}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{bx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{000ch}\PYG{+w}{       }\PYG{c+c1}{; 页号为0(BH = 0) 黑底红字(BL = 0Ch,高亮)}
+\PYG{+w}{    }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dl}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}
+\PYG{+w}{    }\PYG{n+nf}{int}\PYG{+w}{ }\PYG{l+m+mh}{10h}\PYG{+w}{             }\PYG{c+c1}{; 10h 号中断}
+\PYG{+w}{    }\PYG{n+nf}{ret}
+\PYG{n+nl}{BootMessage:}\PYG{+w}{        }\PYG{k+kd}{db}\PYG{+w}{  }\PYG{l+s}{\PYGZdq{}Hello, OS world!\PYGZdq{}}
+
+\PYG{k+kd}{times}\PYG{+w}{   }\PYG{l+m+mi}{510}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{k+kc}{\PYGZdl{}}\PYG{o}{\PYGZhy{}}\PYG{k+kc}{\PYGZdl{}\PYGZdl{}}\PYG{p}{)}\PYG{+w}{  }\PYG{n+nv}{db}\PYG{+w}{  }\PYG{l+m+mi}{0}\PYG{+w}{   }\PYG{c+c1}{; 填充剩下的空间，使生成的二进制代码恰好为512字节}
+\PYG{k+kd}{dw}\PYG{+w}{  }\PYG{l+m+mh}{0xaa55}\PYG{+w}{                  }\PYG{c+c1}{; 结束标志}
+\end{Verbatim}

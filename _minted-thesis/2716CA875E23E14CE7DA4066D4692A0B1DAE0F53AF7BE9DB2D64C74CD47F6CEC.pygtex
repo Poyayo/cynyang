@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{cwd\PYGZus{}cache}\PYG{p}{[}\PYG{n}{MAX\PYGZus{}PATH\PYGZus{}LEN}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{l+m+mi}{0}\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

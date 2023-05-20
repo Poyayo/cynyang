@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{k+kt}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}str}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}I am str!}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}str}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}20211159013 CynYang}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}str}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}this is my OS!}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{while}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

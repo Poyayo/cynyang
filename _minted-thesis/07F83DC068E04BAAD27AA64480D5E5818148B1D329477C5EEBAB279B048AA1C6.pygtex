@@ -1,0 +1,48 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nl}{kernel\PYGZus{}init:}
+\PYG{+w}{   }\PYG{n+nf}{xor}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{eax}
+\PYG{+w}{   }\PYG{n+nf}{xor}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{+w}{		}\PYG{c+c1}{;ebx记录程序头表地址}
+\PYG{+w}{   }\PYG{n+nf}{xor}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{+w}{		}\PYG{c+c1}{;cx记录程序头表中的program header数量}
+\PYG{+w}{   }\PYG{n+nf}{xor}\PYG{+w}{ }\PYG{n+nb}{edx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{edx}\PYG{+w}{		}\PYG{c+c1}{;dx 记录program header尺寸,即e\PYGZus{}phentsize}
+
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{42}\PYG{p}{]}\PYG{+w}{	  }\PYG{c+c1}{; 偏移文件42字节处的属性是e\PYGZus{}phentsize,表示program header大小}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{28}\PYG{p}{]}\PYG{+w}{   }\PYG{c+c1}{; 偏移文件开始部分28字节的地方是e\PYGZus{}phoff,表示第1 个program header在文件中的偏移量}
+\PYG{+w}{					  }\PYG{c+c1}{; 其实该值是0x34,不过还是谨慎一点，这里来读取实际值}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{44}\PYG{p}{]}\PYG{+w}{    }\PYG{c+c1}{; 偏移文件开始部分44字节的地方是e\PYGZus{}phnum,表示有几个program header}
+\PYG{n+nl}{.each\PYGZus{}segment:}
+\PYG{+w}{   }\PYG{n+nf}{cmp}\PYG{+w}{ }\PYG{k+kt}{byte}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{],}\PYG{+w}{ }\PYG{n+nv}{PT\PYGZus{}NULL}\PYG{+w}{		  }\PYG{c+c1}{; 若p\PYGZus{}type等于 PT\PYGZus{}NULL,说明此program header未使用。}
+\PYG{+w}{   }\PYG{n+nf}{je}\PYG{+w}{ }\PYG{n+nv}{.PTNULL}
+
+\PYG{+w}{   }\PYG{c+c1}{;为函数memcpy压入参数,参数是从右往左依然压入.函数原型类似于 memcpy(dst,src,size)}
+\PYG{+w}{   }\PYG{n+nf}{push}\PYG{+w}{ }\PYG{k+kt}{dword}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{16}\PYG{p}{]}\PYG{+w}{		  }\PYG{c+c1}{; program header中偏移16字节的地方是p\PYGZus{}filesz,压入函数memcpy的第三个参数:size}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{+w}{			  }\PYG{c+c1}{; 距程序头偏移量为4字节的位置是p\PYGZus{}offset}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{	  }\PYG{c+c1}{; 加上kernel.bin被加载到的物理地址,eax为该段的物理地址}
+\PYG{+w}{   }\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{+w}{				  }\PYG{c+c1}{; 压入函数memcpy的第二个参数:源地址}
+\PYG{+w}{   }\PYG{n+nf}{push}\PYG{+w}{ }\PYG{k+kt}{dword}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{]}\PYG{+w}{			  }\PYG{c+c1}{; 压入函数memcpy的第一个参数:目的地址,偏移程序头8字节的位置是p\PYGZus{}vaddr，这就是目的地址}
+\PYG{+w}{   }\PYG{n+nf}{call}\PYG{+w}{ }\PYG{n+nv}{mem\PYGZus{}cpy}\PYG{+w}{				  }\PYG{c+c1}{; 调用mem\PYGZus{}cpy完成段复制}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{esp}\PYG{p}{,}\PYG{l+m+mi}{12}\PYG{+w}{				  }\PYG{c+c1}{; 清理栈中压入的三个参数}
+\PYG{n+nl}{.PTNULL:}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{edx}\PYG{+w}{				  }\PYG{c+c1}{; edx为program header大小,即e\PYGZus{}phentsize,在此ebx指向下一个program header }
+\PYG{+w}{   }\PYG{n+nf}{loop}\PYG{+w}{ }\PYG{n+nv}{.each\PYGZus{}segment}
+\PYG{+w}{   }\PYG{n+nf}{ret}
+
+\PYG{c+c1}{;\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}  逐字节拷贝 mem\PYGZus{}cpy(dst,src,size) \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{;输入:栈中三个参数(dst,src,size)}
+\PYG{c+c1}{;输出:无}
+\PYG{c+c1}{;\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n+nl}{mem\PYGZus{}cpy:}\PYG{+w}{		      }
+\PYG{+w}{   }\PYG{n+nf}{cld}
+\PYG{+w}{   }\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{ebp}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebp}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{esp}
+\PYG{+w}{   }\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{+w}{		   }\PYG{c+c1}{; rep指令用到了ecx，但ecx对于外层段的循环还有用，故先入栈备份}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{edi}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebp}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{]}\PYG{+w}{	   }\PYG{c+c1}{; dst}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{esi}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebp}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{12}\PYG{p}{]}\PYG{+w}{	   }\PYG{c+c1}{; src}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebp}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{16}\PYG{p}{]}\PYG{+w}{	   }\PYG{c+c1}{; size}
+\PYG{+w}{   }\PYG{n+nf}{rep}\PYG{+w}{ }\PYG{n+nv}{movsb}\PYG{+w}{		   }\PYG{c+c1}{; 逐字节拷贝}
+
+\PYG{+w}{   }\PYG{c+c1}{;恢复环境}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{+w}{		}
+\PYG{+w}{   }\PYG{n+nf}{pop}\PYG{+w}{ }\PYG{n+nb}{ebp}
+\PYG{+w}{   }\PYG{n+nf}{ret}
+\end{Verbatim}

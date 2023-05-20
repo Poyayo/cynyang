@@ -1,0 +1,29 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{   }\PYG{c+c1}{; 创建页目录及页表并初始化页内存位图}
+\PYG{+w}{   }\PYG{n+nf}{call}\PYG{+w}{ }\PYG{n+nv}{setup\PYGZus{}page}
+
+\PYG{+w}{   }\PYG{c+c1}{;要将描述符表地址及偏移量写入内存gdt\PYGZus{}ptr,一会用新地址重新加载}
+\PYG{+w}{   }\PYG{n+nf}{sgdt}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{gdt\PYGZus{}ptr}\PYG{p}{]}\PYG{+w}{	      }\PYG{c+c1}{; 存储到原来gdt所有的位置}
+
+\PYG{+w}{   }\PYG{c+c1}{;将gdt描述符中视频段描述符中的段基址+0xc0000000}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{gdt\PYGZus{}ptr}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{+w}{  }
+\PYG{+w}{   }\PYG{n+nf}{or}\PYG{+w}{ }\PYG{k+kt}{dword}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nb}{ebx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mh}{0x18}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0xc0000000}\PYG{+w}{      }\PYG{c+c1}{;视频段是第3个段描述符,每个描述符是8字节,故0x18。}
+\PYG{+w}{					      }\PYG{c+c1}{;段描述符的高4字节的最高位是段基址的31\PYGZti{}24位}
+
+\PYG{+w}{   }\PYG{c+c1}{;将gdt的基址加上0xc0000000使其成为内核所在的高地址}
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{k+kt}{dword}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{gdt\PYGZus{}ptr}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m+mh}{0xc0000000}
+
+\PYG{+w}{   }\PYG{n+nf}{add}\PYG{+w}{ }\PYG{n+nb}{esp}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0xc0000000}\PYG{+w}{        }\PYG{c+c1}{; 将栈指针同样映射到内核地址}
+
+\PYG{+w}{   }\PYG{c+c1}{; 把页目录地址赋给cr3}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{PAGE\PYGZus{}DIR\PYGZus{}TABLE\PYGZus{}POS}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cr3}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{eax}
+
+\PYG{+w}{   }\PYG{c+c1}{; 打开cr0的pg位(第31位)}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{cr0}
+\PYG{+w}{   }\PYG{n+nf}{or}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x80000000}
+\PYG{+w}{   }\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cr0}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{eax}
+
+\PYG{+w}{   }\PYG{c+c1}{;在开启分页后,用gdt新的地址重新加载}
+\PYG{+w}{   }\PYG{n+nf}{lgdt}\PYG{+w}{ }\PYG{p}{[}\PYG{n+nv}{gdt\PYGZus{}ptr}\PYG{p}{]}\PYG{+w}{             }\PYG{c+c1}{; 重新加载}
+\end{Verbatim}

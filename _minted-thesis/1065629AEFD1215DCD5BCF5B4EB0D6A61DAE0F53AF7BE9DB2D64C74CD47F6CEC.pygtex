@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{print\PYGZus{}prompt}\PYG{p}{(}\PYG{k+kt}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{n}{printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[yx@SheepOS \PYGZpc{}s]\PYGZdl{} \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cwd\PYGZus{}cache}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

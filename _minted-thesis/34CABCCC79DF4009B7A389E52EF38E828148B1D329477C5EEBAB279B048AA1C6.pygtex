@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{ds}
+\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{es}
+\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{fs}
+\PYG{n+nf}{push}\PYG{+w}{ }\PYG{n+nb}{gs}
+\PYG{n+nf}{pushad}
+\end{Verbatim}

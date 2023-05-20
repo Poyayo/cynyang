@@ -1,0 +1,58 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{file\PYGZus{}open}\PYG{p}{(}\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{flag}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fd\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{get\PYGZus{}free\PYGZus{}slot\PYGZus{}in\PYGZus{}global}\PYG{p}{();}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{fd\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}exceed max open files}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}inode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}open}\PYG{p}{(}\PYG{n}{cur\PYGZus{}part}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{	     }\PYG{c+c1}{// 每次打开文件,要将fd\PYGZus{}pos还原为0,即让文件内的指针指向开头}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}flag}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{flag}\PYG{p}{;}
+\PYG{+w}{   }\PYG{k+kt}{bool}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{write\PYGZus{}deny}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{write\PYGZus{}deny}\PYG{p}{;}\PYG{+w}{ }
+
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{flag}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{O\PYGZus{}WRONLY}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{n}{flag}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{O\PYGZus{}RDWR}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{	}\PYG{c+c1}{// 只要是关于写文件,判断是否有其它进程正写此文件}
+\PYG{+w}{						}\PYG{c+c1}{// 若是读文件,不考虑write\PYGZus{}deny}
+\PYG{+w}{   }\PYG{c+cm}{/* 以下进入临界区前先关中断 */}
+\PYG{+w}{      }\PYG{k}{enum}\PYG{+w}{ }\PYG{n}{intr\PYGZus{}status}\PYG{+w}{ }\PYG{n}{old\PYGZus{}status}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{intr\PYGZus{}disable}\PYG{p}{();}
+\PYG{+w}{      }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{p}{(}\PYG{o}{*}\PYG{n}{write\PYGZus{}deny}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{    }\PYG{c+c1}{// 若当前没有其它进程写该文件,将其占用.}
+\PYG{+w}{	 }\PYG{o}{*}\PYG{n}{write\PYGZus{}deny}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// 置为true,避免多个进程同时写此文件}
+\PYG{+w}{	 }\PYG{n}{intr\PYGZus{}set\PYGZus{}status}\PYG{p}{(}\PYG{n}{old\PYGZus{}status}\PYG{p}{);}\PYG{+w}{	  }\PYG{c+c1}{// 恢复中断}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{		}\PYG{c+c1}{// 直接失败返回}
+\PYG{+w}{	 }\PYG{n}{intr\PYGZus{}set\PYGZus{}status}\PYG{p}{(}\PYG{n}{old\PYGZus{}status}\PYG{p}{);}
+\PYG{+w}{	 }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}file can`t be write now, try again later}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{	 }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}\PYG{+w}{  }\PYG{c+c1}{// 若是读文件或创建文件,不用理会write\PYGZus{}deny,保持默认}
+\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{pcb\PYGZus{}fd\PYGZus{}install}\PYG{p}{(}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+cm}{/* 关闭文件 */}
+\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{file\PYGZus{}close}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{file}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{file}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{file}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{n}{file}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{fd\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{write\PYGZus{}deny}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{inode\PYGZus{}close}\PYG{p}{(}\PYG{n}{file}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{fd\PYGZus{}inode}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{file}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{fd\PYGZus{}inode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// 使文件结构可用}
+\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+cm}{/* 将文件描述符转化为文件表的下标 */}
+\PYG{k}{static}\PYG{+w}{ }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{fd\PYGZus{}local2global}\PYG{p}{(}\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{local\PYGZus{}fd}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{task\PYGZus{}struct}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{cur}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{running\PYGZus{}thread}\PYG{p}{();}
+\PYG{+w}{   }\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{global\PYGZus{}fd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{cur}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{fd\PYGZus{}table}\PYG{p}{[}\PYG{n}{local\PYGZus{}fd}\PYG{p}{];}\PYG{+w}{  }
+\PYG{+w}{   }\PYG{n}{ASSERT}\PYG{p}{(}\PYG{n}{global\PYGZus{}fd}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{global\PYGZus{}fd}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}FILE\PYGZus{}OPEN}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{uint32\PYGZus{}t}\PYG{p}{)}\PYG{n}{global\PYGZus{}fd}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }
+
+\PYG{c+cm}{/* 关闭文件描述符fd指向的文件,成功返回0,否则返回\PYGZhy{}1 */}
+\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{sys\PYGZus{}close}\PYG{p}{(}\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{fd}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{ret}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}\PYG{+w}{   }\PYG{c+c1}{// 返回值默认为\PYGZhy{}1,即失败}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{fd}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{\PYGZus{}fd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fd\PYGZus{}local2global}\PYG{p}{(}\PYG{n}{fd}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{ret}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{file\PYGZus{}close}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{\PYGZus{}fd}\PYG{p}{]);}
+\PYG{+w}{      }\PYG{n}{running\PYGZus{}thread}\PYG{p}{()}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{fd\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// 使该文件描述符位可用}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{ret}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

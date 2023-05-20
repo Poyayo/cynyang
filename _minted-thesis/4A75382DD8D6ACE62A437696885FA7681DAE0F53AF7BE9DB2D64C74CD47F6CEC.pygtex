@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{k+kt}{void}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}str}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}I am Str}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}str}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}20211159013 CynYang}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}int}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}char}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}int}\PYG{p}{(}\PYG{l+m+mi}{9}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}char}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}int}\PYG{p}{(}\PYG{l+m+mh}{0x00021a3f}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}char}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}int}\PYG{p}{(}\PYG{l+m+mh}{0x12345678}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}char}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{put\PYGZus{}int}\PYG{p}{(}\PYG{l+m+mi}{2023}\PYG{l+m+mo}{\PYGZhy{}04\PYGZhy{}03}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{while}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

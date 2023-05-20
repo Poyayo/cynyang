@@ -1,0 +1,73 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/* 创建文件,若成功则返回文件描述符,否则返回\PYGZhy{}1 */}
+\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{file\PYGZus{}create}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{parent\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{flag}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{c+cm}{/* 后续操作的公共缓冲区 */}
+\PYG{+w}{   }\PYG{k+kt}{void}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{io\PYGZus{}buf}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sys\PYGZus{}malloc}\PYG{p}{(}\PYG{l+m+mi}{1024}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{io\PYGZus{}buf}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}in file\PYGZus{}creat: sys\PYGZus{}malloc for io\PYGZus{}buf failed}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{rollback\PYGZus{}step}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{	       }\PYG{c+c1}{// 用于操作失败时回滚各资源状态}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 为新文件分配inode */}
+\PYG{+w}{   }\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}alloc}\PYG{p}{(}\PYG{n}{cur\PYGZus{}part}\PYG{p}{);}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{inode\PYGZus{}no}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}in file\PYGZus{}creat: allocate inode failed}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+
+\PYG{c+cm}{/* 此inode要从堆中申请内存,不可生成局部变量(函数退出时会释放)}
+\PYG{c+cm}{ * 因为file\PYGZus{}table数组中的文件描述符的inode指针要指向它.*/}
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{o}{*}\PYG{p}{)}\PYG{n}{sys\PYGZus{}malloc}\PYG{p}{(}\PYG{k}{sizeof}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{inode}\PYG{p}{));}\PYG{+w}{ }
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}file\PYGZus{}create: sys\PYGZus{}malloc for inode failded}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{rollback\PYGZus{}step}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{      }\PYG{k}{goto}\PYG{+w}{ }\PYG{n}{rollback}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{   }\PYG{n}{inode\PYGZus{}init}\PYG{p}{(}\PYG{n}{inode\PYGZus{}no}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{p}{);}\PYG{+w}{	    }\PYG{c+c1}{// 初始化i结点}
+
+\PYG{+w}{   }\PYG{c+cm}{/* 返回的是file\PYGZus{}table数组的下标 */}
+\PYG{+w}{   }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fd\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{get\PYGZus{}free\PYGZus{}slot\PYGZus{}in\PYGZus{}global}\PYG{p}{();}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{fd\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}exceed max open files}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{rollback\PYGZus{}step}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}
+\PYG{+w}{      }\PYG{k}{goto}\PYG{+w}{ }\PYG{n}{rollback}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}inode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}flag}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{flag}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{file\PYGZus{}table}\PYG{p}{[}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{].}\PYG{n}{fd\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{write\PYGZus{}deny}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir\PYGZus{}entry}\PYG{+w}{ }\PYG{n}{new\PYGZus{}dir\PYGZus{}entry}\PYG{p}{;}
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{new\PYGZus{}dir\PYGZus{}entry}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{sizeof}\PYG{p}{(}\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{dir\PYGZus{}entry}\PYG{p}{));}
+
+\PYG{+w}{   }\PYG{n}{create\PYGZus{}dir\PYGZus{}entry}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FT\PYGZus{}REGULAR}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{new\PYGZus{}dir\PYGZus{}entry}\PYG{p}{);}\PYG{+w}{	}\PYG{c+c1}{// create\PYGZus{}dir\PYGZus{}entry只是内存操作不出意外,不会返回失败}
+
+\PYG{c+cm}{/* 同步内存数据到硬盘 */}
+\PYG{+w}{   }\PYG{c+cm}{/* a 在目录parent\PYGZus{}dir下安装目录项new\PYGZus{}dir\PYGZus{}entry, 写入硬盘后返回true,否则false */}
+\PYG{+w}{   }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{sync\PYGZus{}dir\PYGZus{}entry}\PYG{p}{(}\PYG{n}{parent\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{new\PYGZus{}dir\PYGZus{}entry}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{io\PYGZus{}buf}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{printk}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}sync dir\PYGZus{}entry to disk failed}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{      }\PYG{n}{rollback\PYGZus{}step}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{3}\PYG{p}{;}
+\PYG{+w}{      }\PYG{k}{goto}\PYG{+w}{ }\PYG{n}{rollback}\PYG{p}{;}
+\PYG{+w}{   }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{n}{io\PYGZus{}buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1024}\PYG{p}{);}
+\PYG{+w}{   }\PYG{c+cm}{/* b 将父目录i结点的内容同步到硬盘 */}
+\PYG{+w}{   }\PYG{n}{inode\PYGZus{}sync}\PYG{p}{(}\PYG{n}{cur\PYGZus{}part}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{parent\PYGZus{}dir}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{inode}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{io\PYGZus{}buf}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{n}{memset}\PYG{p}{(}\PYG{n}{io\PYGZus{}buf}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1024}\PYG{p}{);}
+\PYG{+w}{   }\PYG{c+cm}{/* c 将新创建文件的i结点内容同步到硬盘 */}
+\PYG{+w}{   }\PYG{n}{inode\PYGZus{}sync}\PYG{p}{(}\PYG{n}{cur\PYGZus{}part}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{io\PYGZus{}buf}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{c+cm}{/* d 将inode\PYGZus{}bitmap位图同步到硬盘 */}
+\PYG{+w}{   }\PYG{n}{bitmap\PYGZus{}sync}\PYG{p}{(}\PYG{n}{cur\PYGZus{}part}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}no}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{INODE\PYGZus{}BITMAP}\PYG{p}{);}
+
+\PYG{+w}{   }\PYG{c+cm}{/* e 将创建的文件i结点添加到open\PYGZus{}inodes链表 */}
+\PYG{+w}{   }\PYG{n}{list\PYGZus{}push}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{cur\PYGZus{}part}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{open\PYGZus{}inodes}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{inode\PYGZus{}tag}\PYG{p}{);}
+\PYG{+w}{   }\PYG{n}{new\PYGZus{}file\PYGZus{}inode}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{i\PYGZus{}open\PYGZus{}cnts}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+
+\PYG{+w}{   }\PYG{n}{sys\PYGZus{}free}\PYG{p}{(}\PYG{n}{io\PYGZus{}buf}\PYG{p}{);}
+\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{pcb\PYGZus{}fd\PYGZus{}install}\PYG{p}{(}\PYG{n}{fd\PYGZus{}idx}\PYG{p}{);}
+\end{Verbatim}

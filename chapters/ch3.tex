@@ -15,14 +15,14 @@ jmp f000:e05b
 \end{nasmcode}
 \end{codeblock}
 \texttt{JMP}，顾名思义就是要跳转到内存中的\texttt{F000:E05B}这个地址，
-这里就是BIOS待机的地方。\texttt{JMP}到这之后，BIOS被唤醒，得到了软
-件接力的第一棒。而BIOS要干的事情就是：
-\begin{enumerate}
+这里就是BIOS待机的地方。\texttt{JMP}到这之后，BIOS被唤醒，接管了CPU的使用权
+。之后BIOS要做的事情就是：
+\begin{itemize}
 \item 准备好和基本输入输出相关的函数
 \item 检查硬件
 \item 将主引导扇区（MBR）的代码加载到内存中的\texttt{0x7C00}位置
 \item 跳转到\texttt{0x7C00}
-\end{enumerate}
+\end{itemize}
 
 \begin{figure}[H]
   \centering
@@ -36,14 +36,14 @@ jmp f000:e05b
 
 MBR，全称是Master Boot Record，主引导扇区，共有512个字节，其结构如图\ref{fig:mbr}所
 示。主要由三个部分组成，分别是:
-\begin{enumerate}
+\begin{itemize}
 \item 主引导程序(Bootloader):占扇区前446个字节，在计算机开机，BIOS完成自检后，会将MBR加载
   到内存中，然后执行前446字节的引导程序。
 \item 硬盘分区表(DPT):占扇区中间64个字节，主要用来定位各个分区，访问用户数据。
 \item MBR结束标志\texttt{0xAA55}:占扇区最后2字节，也被称为魔数。每次执行引导程序时都会检查
   程序的结尾是否是\texttt{0xAA55},若不是的话则会认定这是一个无效的MBR引导扇区，将会中止引
   导。
-\end{enumerate}
+\end{itemize}
 
 \begin{figure}
   \centering
@@ -53,10 +53,10 @@ MBR，全称是Master Boot Record，主引导扇区，共有512个字节，其�
 \end{figure}
 
 BIOS在\texttt{0x7C00}处把CPU的控制权交由MBR之后，将会再次进入待机状
-态，至此，BIOS的使命就完成了。MBR中的代码部分是由我们自己编写的，它可
+态，至此，BIOS的任务就完成了。\texttt{MBR.S}中的代码部分是由自己编写的，它可
 以简单到只要如下三条汇编程序语句:%
-\begin{enumerate}
-\item 告诉汇编器把我们的起始地址编译为\texttt{0x7C00};
+\begin{itemize}
+\item 告诉汇编器把MBR的起始地址编译为\texttt{0x7C00};
 \begin{codeblock}
 \begin{nasmcode}
  SECTION MBR vstart=0x7c00
@@ -75,10 +75,14 @@ BIOS在\texttt{0x7C00}处把CPU的控制权交由MBR之后，将会再次进入�
  db 0x55,0xaa  
 \end{nasmcode}
 \end{codeblock}  
-\end{enumerate}
+\end{itemize}
 
-这样我们就拥有了一个很小的MBR，当然只是这样做的话太不优雅了，屏幕上可能会有很
-多乱七八糟的代码，所以还是让我们的MBR不那么简单一点：%
+这样就拥有了一个很小的MBR，当然只是这样做的话，屏幕上可能会有很
+多乱七八糟的信息，因为Bochs虚拟机的设计师默认是会显示一些Bochs
+的版本号等等信息的，所以还是让Bochs的界面能够显示的清爽一些，调
+用汇编寄存器\texttt{0x60}号功能号来实现清屏，再通过对字符串的
+操作来实现在Bochs界面上打印出来一个\texttt{Hello, OS world!}
+来表示MBR已经被成功加载了。代码如下:%
 
 \begin{longlisting}
 \begin{nasmcode}
@@ -119,20 +123,15 @@ dw  0xaa55                  ; 结束标志
   \label{fig:img2-2}
 \end{figure}
 
-整个界面没有显示其它的参数信息，仅有刚刚代码中打印出的\emph{Hello, OS World!}字
-样，这小小的512个字节，如果按代码量来算的话甚至没有512字节，但它已经坐
-在了操作系统的位置上，接下来的工作都将建立在该基础之上，一步一步的来完
-善我的SheepOS\footnote{我自己给它取的一个名字，因为我很喜欢绵羊所以就把
-  我的OS叫做SheepOS了。}。至此，MBR已经从BIOS上接管了CPU的使用权，下面就该
-轮到Loader出场了。
+至此，MBR已经从BIOS上接管了CPU的使用权。
 
 \section{Loader的工作}
 \label{sec:Loader}
 
 MBR在完成跟BIOS的交接后，需要解决三个问题：1）从硬盘上找
 到Loader；2）把Loader搬运到内存中的什么地方；3）怎样搬运。其中第1、2条
-其实是由自己定义的，可以自己选择把Loader放在硬盘里的任何一个地址，我选
-择放在了第二扇区，所以就需要MBR去硬盘的第二扇区寻找Loader。那么找到Loader后
+其实是由自己定义的，可以自己选择把Loader放在硬盘里的任何一个地址，该操作系统中
+放在了第二扇区，所以就需要MBR去硬盘的第二扇区寻找Loader。那么找到Loader后
 要搬运到哪呢？
 
 \begin{figure}
@@ -143,8 +142,8 @@ MBR在完成跟BIOS的交接后，需要解决三个问题：1）从硬盘上找
 \end{figure}
 
 如图\ref{fig:neicun}所示，有两个可用的区
-域\texttt{0x7E00～0x9FBFF}和\texttt{0x500～0x7BFF}，我选择把它放
-在\texttt{0x900}这个地方，所以最终MBR就会把Loader搬运到\texttt{0x900}这
+域\texttt{0x7E00～0x9FBFF}和\texttt{0x500～0x7BFF}，本操作系统中将它放
+在了\texttt{0x900}这个地方，所以最终MBR就会把Loader搬运到\texttt{0x900}这
 个地方。
 
 \section{内核的启动}
@@ -153,18 +152,21 @@ MBR在完成跟BIOS的交接后，需要解决三个问题：1）从硬盘上找
 \subsection{从实模式到保护模式}
 \label{subsec:protect}
 
-在Loader被搬运到\texttt{0x900}之后，需要将操作系统由实模式转变到保护模式\cite{LWY2013}，原因在于：
-\begin{enumerate}
+在Loader被搬运到\texttt{0x900}之后，需要将操作系统由实模式转变到保护模式\cite{LWY2013}，原
+因有以下几点：
+\begin{itemize}
 \item 实模式下操作系统和用户程序会属于同一个特权级。
 \item 逻辑地址 = 物理地址，顾名思义就是用户程序引用的地址最终都指向真实的物理地址。
 \item 用户程序能够自由地修改段基址。
 \item 当需要访问超过64KB内存的区域时，要切换段基址。
 \item 浪费计算机资源，因为一次只能够运行一个程序。
 \item 一共只有20条地址线，加起来最大的可用内存也仅有1MB。
-\end{enumerate}
+\end{itemize}
 
 所以需要将操作系统引导到保护模式下才可以既安全，又能充分地利用计算机的
-资源，还不用过于担心内存问题。因为实模式的寻址方式是“（段基址:段内偏移
+资源，还不用过于担心内存问题。
+
+实模式的寻址方式是“（段基址:段内偏移
 地址）”的形式；而保护模式的寻址方式是“（选择子:段:偏移地址）”，所以保护
 模式还需要段描述符来描述一个段的信息，一个段描述符是8个字节，多个段描述
 符就构成了段描述符表也就是“GDT”\footnote{GDT(Global Descriptor Table)\cite{chxs2012},全局描述符表，一个
@@ -191,13 +193,12 @@ mov cr0, eax
 \end{nasmcode}  
 \end{codeblock}
 
-至此，操作系统已经成功进入了保护模式，接下来就是本节的主角“内核”登场了。
+至此，操作系统已经成功进入了保护模式，接下来就是把CPU的使用权交给Kernel（内核）。
 
 \subsection{内核初始化}
 
-Loader把内核从硬盘上读出来，然后加载到内存中去，至此，软件接力棒就交到
-了最后一位选手 --- 内核 --- 手里，这就是操作系统从电脑开机到接
-管CPU使用权的一个大致过程。内核的代码如下：
+Loader会把内核从硬盘上读出来，然后加载到内存中去，至此，CPU的使用权就会传到内核手上
+，这就是操作系统从电脑开机到接管CPU使用权的一个大致过程。内核的代码如下：
 
 \begin{codeblock}
 \begin{ccode}

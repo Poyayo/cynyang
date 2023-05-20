@@ -1,0 +1,23 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{super\PYGZus{}block}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{magic}\PYG{p}{;}\PYG{+w}{		    }\PYG{c+c1}{// 用来标识文件系统类型,支持多文件系统的操作系统通过此标志来识别文件系统类型}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{sec\PYGZus{}cnt}\PYG{p}{;}\PYG{+w}{		    }\PYG{c+c1}{// 本分区总共的扇区数}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}cnt}\PYG{p}{;}\PYG{+w}{		    }\PYG{c+c1}{// 本分区中inode数量}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{part\PYGZus{}lba\PYGZus{}base}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// 本分区的起始lba地址}
+
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// 块位图本身起始扇区地址}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{block\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{     }\PYG{c+c1}{// 扇区位图本身占用的扇区数量}
+
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}lba}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// i结点位图起始扇区lba地址}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}bitmap\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// i结点位图占用的扇区数量}
+
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}table\PYGZus{}lba}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// i结点表起始扇区lba地址}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{inode\PYGZus{}table\PYGZus{}sects}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// i结点表占用的扇区数量}
+
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{data\PYGZus{}start\PYGZus{}lba}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// 数据区开始的第一个扇区号}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{root\PYGZus{}inode\PYGZus{}no}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// 根目录所在的I结点号}
+\PYG{+w}{   }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{dir\PYGZus{}entry\PYGZus{}size}\PYG{p}{;}\PYG{+w}{	    }\PYG{c+c1}{// 目录项大小}
+
+\PYG{+w}{   }\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{  }\PYG{n}{pad}\PYG{p}{[}\PYG{l+m+mi}{460}\PYG{p}{];}\PYG{+w}{		    }\PYG{c+c1}{// 加上460字节,凑够512字节1扇区大小}
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{n}{\PYGZus{}\PYGZus{}attribute\PYGZus{}\PYGZus{}}\PYG{+w}{ }\PYG{p}{((}\PYG{n}{packed}\PYG{p}{));}
+\end{Verbatim}

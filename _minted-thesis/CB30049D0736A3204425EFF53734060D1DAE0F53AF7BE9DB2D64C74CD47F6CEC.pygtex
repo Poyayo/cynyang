@@ -1,9 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{arg\PYGZus{}path\PYGZus{}nr}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{   }\PYG{n}{pathname}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{argv}\PYG{p}{[}\PYG{n}{arg\PYGZus{}idx}\PYG{p}{];}
-\PYG{+w}{   }\PYG{n}{arg\PYGZus{}path\PYGZus{}nr}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
-\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{   }\PYG{n}{printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}ls: only support one path}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
-\PYG{+w}{   }\PYG{k}{return}\PYG{p}{;}
-\PYG{p}{\PYGZcb{}}
-\end{Verbatim}

@@ -1,6 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{argc}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}
-\PYG{p}{\PYGZob{}}
-\PYG{+w}{   }\PYG{n}{printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}mkdir: only support 1 argument!}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{);}
-\PYG{p}{\PYGZcb{}}
-\end{Verbatim}

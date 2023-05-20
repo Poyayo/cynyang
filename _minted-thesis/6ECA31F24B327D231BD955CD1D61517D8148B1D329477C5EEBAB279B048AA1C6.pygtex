@@ -1,4 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cx}\PYG{p}{,}\PYG{l+m+mi}{4}
-\PYG{n+nf}{call}\PYG{+w}{ }\PYG{n+nv}{rd\PYGZus{}disk}
-\end{Verbatim}

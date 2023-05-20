@@ -1,6 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{write}\PYG{p}{(}\PYG{k+kt}{int32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{fd}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{)}
-\PYG{p}{\PYGZob{}}
-\PYG{+w}{   }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{\PYGZus{}syscall3}\PYG{p}{(}\PYG{n}{SYS\PYGZus{}WRITE}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buf}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{);}
-\PYG{p}{\PYGZcb{}}
-\end{Verbatim}

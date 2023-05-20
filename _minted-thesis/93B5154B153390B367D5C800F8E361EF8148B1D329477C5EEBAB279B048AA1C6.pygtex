@@ -1,5 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{cr0}
-\PYG{n+nf}{or}\PYG{+w}{  }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mh}{0x00000001}
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{cr0}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{eax}
-\end{Verbatim}

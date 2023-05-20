@@ -1,9 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n+no}{KERNEL\PYGZus{}START\PYGZus{}SECTOR}\PYG{+w}{ }\PYG{k+kd}{equ}\PYG{+w}{ }\PYG{l+m+mh}{0x200}
-\PYG{n+no}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{ }\PYG{k+kd}{equ}\PYG{+w}{ }\PYG{l+m+mh}{0x70000}
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{eax}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{KERNEL\PYGZus{}START\PYGZus{}SECTOR}\PYG{+w}{        }\PYG{c+c1}{; kernel.bin所在的扇区号}
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ebx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nv}{KERNEL\PYGZus{}BIN\PYGZus{}BASE\PYGZus{}ADDR}\PYG{+w}{       }\PYG{c+c1}{; 从磁盘读出后，写入到ebx指定的地址}
-\PYG{n+nf}{mov}\PYG{+w}{ }\PYG{n+nb}{ecx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{200}\PYG{+w}{                }\PYG{c+c1}{; 读入的扇区数}
-
-\PYG{n+nf}{call}\PYG{+w}{ }\PYG{n+nv}{rd\PYGZus{}disk\PYGZus{}32}
-\end{Verbatim}

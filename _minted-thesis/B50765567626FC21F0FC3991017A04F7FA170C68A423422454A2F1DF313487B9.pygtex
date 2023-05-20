@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-dd\PYG{+w}{ }\PYG{k}{if}\PYG{o}{=}kernel.bin\PYG{+w}{ }\PYG{n+nv}{of}\PYG{o}{=}/SheepOS/hd60M.img\PYG{+w}{ }\PYG{n+nv}{bs}\PYG{o}{=}\PYG{l+m}{512}\PYG{+w}{ }\PYG{n+nv}{count}\PYG{o}{=}\PYG{l+m}{200}\PYG{+w}{ }\PYG{n+nv}{seek}\PYG{o}{=}\PYG{l+m}{7}\PYG{+w}{ }\PYG{n+nv}{conv}\PYG{o}{=}notrunc
-\end{Verbatim}

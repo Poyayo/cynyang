@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k+kt}{char}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{buildin\PYGZus{}cd}\PYG{p}{(}\PYG{k+kt}{uint32\PYGZus{}t}\PYG{+w}{ }\PYG{n}{argc}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{o}{**}\PYG{+w}{ }\PYG{n}{argv}\PYG{p}{)}
-\end{Verbatim}

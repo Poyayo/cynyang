@@ -9,7 +9,7 @@ SheepOS实现了若干比较简单的实验性功能，包括屏幕输出、中�
 不方便，所以就需要为SheepOS增加属于它自己的\texttt{Print}函数。要实现一个\texttt{Print}函数大致可以
 分为以下几个步骤（具体代码参见附录\ref{fsec:put_char}）:
 
-\begin{itemize}
+\begin{enumerate}
 \item 备份寄存器;
 \item 获取光标当前所处的位置坐标，该位置就是下一个可打印字符的位置;
 \item 获取需要打印的字符;
@@ -17,13 +17,13 @@ SheepOS实现了若干比较简单的实验性功能，包括屏幕输出、中�
 \item 判断需不需要滚屏;
 \item 更新光标的位置坐标，让它指向下一个打印字符的位置;
 \item 恢复寄存器。
-\end{itemize}
+\end{enumerate}
 这样就可以实现对单个字符的打印，效果如图\ref{fig:print_char}所示，这里只实现了对单个字符的
-print，目前该效果是由多个\texttt{put\_char}来打印字符拼到一起来实现的
+print，目前该效果是由多个\texttt{put\_char}来打印字符拼到一起来实现的。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=12cm]{图3-8}
+  \includegraphics[width=.6\linewidth]{图3-8}
   \caption{字符打印}
   \label{fig:print_char}
 \end{figure}
@@ -256,12 +256,12 @@ INT\_NUM & Short Description           & INT\_NUM & Short Description           
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=12cm]{图3-12}
+  \includegraphics[width=.8\linewidth]{int-a}
   \caption{中断过程}
   \label{fig:interrupt_a}
 \end{figure}
 
-如上图\ref{fig:8259A},当向主片\texttt{0xA0}地址和从片\texttt{0x20}地址发送\texttt{EOI}后，就代表告诉\texttt{8259A}中断程序处理
+如图\ref{fig:8259A}所示，当向主片\texttt{0xA0}地址和从片\texttt{0x20}地址发送\texttt{EOI}后，就代表告诉\texttt{8259A}中断程序处理
 结束了。
 
 在进入中断前，还需要先保存中断发生前上下文的环境，以免发生数据丢失的情况，这里使用\texttt{PUSHAD}指
@@ -321,20 +321,24 @@ SheepOS现在已经有了中断，而在之前的图\ref{fig:8259A}上不难发�
 
 \section{进程的实现}
 \label{sec:course}
-特权级的概念在前面图\ref{fig:tequan}稍有提及，到现在SheepOS的程序一直是在最高特权级0级下运行
+特权级的概念在前面图\ref{fig:tequan}中稍有提及，到现在SheepOS的程序一直是在最高特权级0级下运行
 的，这非常危险，意味着用户程序有着跟操作系统同等的权限，想干什么干什么，若是有什么不听话的
 程序的话，后果往往是灾难性的。操作系统存在的目的之一就是要管理资源的，所以操作系统可以一直
 处于最高特权级，拥有最高的权利，但被管理的程序当然不能跟操作系统拥有同等的权利，所谓“一山
 不容二虎”，一般情况下用户程序得处于特权级3级才行，所以在实现进程之前得先把权限的高低分清楚。
 
 \subsection{从特权级0到特权级3}
-一般情况下CPU是不允许从高特权级跳向低特权级的，所以如果想从特权级0跳到特权级3的话，得
-采取一些手段，可以用从调用门和中断返回的手段来实现特权级0->特权级3的转变，在SheepOS里使
-用的是中断返回的方式。既然要用中断返回，那就少不了\texttt{iretd}指令\cite{ws2013}，\texttt{iretd}指令会将栈
-中的数据当作返回的地址，还会加载栈里的\texttt{eflags}的值到EFLAGS寄存器中，若栈里的\texttt{cs.rpl}特权级更低
-的话，CPU的特权级Check通过后，还会把\texttt{cs}载入到CS寄存器中，\texttt{ss}载入到SS寄存器中，之后CPU进入低
-特权级。因此就必须在栈中的时候提前把数据准备妥当为\texttt{iretd}指令使用。简单的说就是把进程前后的
-内容都存到栈里，然后通过\texttt{pop}把用户进程的数据加载到寄存器，最后使用\texttt{iretd}退出中断。
+
+一般情况下CPU是不允许从高特权级跳向低特权级的，所以如果想从特权级0跳到
+特权级3的话，得采取一些手段，可以用从调用门和中断返回的手段来实现特权
+级0->特权级3的转变，在SheepOS里使用的是中断返回的方式。既然要用中断返回，
+那就少不了\texttt{iretd}指令\cite{ws2013}，\texttt{iretd}指令会将栈中的
+数据当作返回的地址，还会加载栈里的\texttt{eflags}的值到EFLAGS寄存器中，
+若栈里的\texttt{cs.rpl}特权级更低的话，CPU的特权级Check通过后，还会
+把\texttt{cs}载入到CS寄存器中，\texttt{ss}载入到SS寄存器中，之后CPU进入
+低特权级。因此就必须在栈中的时候提前把数据准备妥当为\texttt{iretd}指令
+使用。简单的说就是把进程前后的内容都存到栈里，然后通过\texttt{pop}把用
+户进程的数据加载到寄存器，最后使用\texttt{iretd}退出中断。
 \begin{itemize}
 \item 退出中断的出口:\texttt{intr\_exit}函数;
 \begin{codeblock}

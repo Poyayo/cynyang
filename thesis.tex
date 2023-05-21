@@ -15,10 +15,10 @@
   enTitle={Research on Operating System based on Linux},%
   enAuthor={YangXin}, % 作者姓名（英文）
   Advisor={王晓林（讲师）}, % 指导教师姓名（职称）
-  Reviewer={},
-  Year={\the\year},
-  Month={\the\month},
-  Date={\the\day},
+  Reviewer={鲁宁（副教授）},%
+  Year={\the\year},%
+  Month={\the\month},%
+  Date={\the\day},%
   Major={计算机科学与技术专业}, %专业名称（比如 电子信息工程专业）
 }
 
@@ -28,32 +28,42 @@
 \frontmatter
 
 \begin{abstract} % 摘要
-  本文研究的是基于Linux的操作系统。首先介绍了Linux的发展历程及其特点，包括开源、自由、可定
-  制等。接着详细介绍了Linux操作系统的内核结构和系统调用，解释了Linux的开机过程、中断、进程
+  本文研究的是基于Linux的操作系统。首先简要介绍了Linux的发展历程及其特点，包括开源、自由、可定
+  制等。接着在技术方面，探讨了Linux操作系统的内核结构和系统调用，以及Linux的开机过程、中断、进程
   管理、文件系统。
 
-  在学习了Linux操作系统的基础后，本文在此基础上实现了一个简单的操作系统。该
+  本文在学习Linux操作系统的基础上，模拟实现了一个简单的操作系统。该
   操作系统采用汇编语言与C语言编写，实现了简单的进程管理、文件系统和一个简单
-  的Shell. 在实现过程中，本文详细阐述了操作系统的设计思路、算法实现和关键技术，包括进程调
-  度算法、中断处理算法、文件系统实现和shell的一些基本功能应用。
+  的Shell。在实现过程中，本文详细阐述了操作系统的设计思路和关键技术，包括进程调
+  度、中断处理、文件系统实现和shell的一些基本功能应用。
 \end{abstract}
 
 \begin{keyword} % 关键词
-Boot; Loader; GDT; Kernel; 中断; 进程调度; Shell;
+操作系统; 系统启动; 内核; 中断; 进程调度; 文件系统; 命令行; Linux;
+BIOS; MBR; Loader;
 \end{keyword}
 
 \begin{EAbstract}
-  This paper studies the operating system based on Linux. Firstly, it introduces the development history and characteristics of Linux, including open source, freedom,
-  System etc. Next, the internal structure and system adjustment of the Linux operating system are introduced in detail, and the boot process, interruption, and process of Linux are explained.
-  Management, file system.
+  This paper studies the operating system based on Linux. Firstly, it
+  introduces the development history and characteristics of Linux,
+  including open source, freedom, System etc. Next, the internal
+  structure and system adjustment of the Linux operating system are
+  introduced in detail, and the boot process, interruption, and
+  process of Linux are explained.  Management, file system.
 
-  After learning the basis of the Linux operating system, this article implements a simple operating system on this basis.
-  The operating system is based on the Linux kernel, written in assembly language and C language, and realizes simple program management, file system and a simple single
-  shell. In the actual process, this paper describes in detail the design ideas, algorithm reality and key technologies of the operating system, including
-  Some basic functional applications of calculation method, interrupt processing method, file system implementation and shell.
+  After learning the basis of the Linux operating system, this article
+  implements a simple operating system on this basis.  The operating
+  system is based on the Linux kernel, written in assembly language
+  and C language, and realizes simple program management, file system
+  and a simple single shell. In the actual process, this paper
+  describes in detail the design ideas, algorithm reality and key
+  technologies of the operating system, including Some basic
+  functional applications of calculation method, interrupt processing
+  method, file system implementation and shell.
 \end{EAbstract}
 \begin{EKeyword}
-Boot; Loader; GDT; Kernel; Interrupt; Process Scheduling; Shell;  
+Linux; Kernel; OS; Operating system; Boot; MBR; Loader; GDT;
+Interrupt; Process Scheduling; Shell; File system;
 \end{EKeyword}
 
 \tableofcontents     % 目录
@@ -88,7 +98,7 @@ Boot; Loader; GDT; Kernel; Interrupt; Process Scheduling; Shell;
 \makebib % 参考文献
 
 \begin{advisorInfo} % 指导教师简介
-  王晓林，男，50岁，硕士，讲师，毕业于英国格林尼治大学，分布式计算系统专业。现任
+  王晓林，男，54岁，硕士，讲师，毕业于英国格林尼治大学，分布式计算系统专业。现任
   西南林业大学计信学院教师。执教Linux、操作系统、网络技术等方面的课程，有丰富的Linux教学和系统管理经验。
 \end{advisorInfo}
 
@@ -105,7 +115,7 @@ Boot; Loader; GDT; Kernel; Interrupt; Process Scheduling; Shell;
 
 %%%%% 附录章节
 \singlespacing
-%\include{chapters/ch5}
+
 \include{chapters/ch6}
 
 \end{document} % 结束。不要动下面几行！

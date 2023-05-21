@@ -8,7 +8,6 @@ int32_t file_open(uint32_t inode_no, uint8_t flag) {
    file_table[fd_idx].fd_pos = 0;	     // 每次打开文件,要将fd_pos还原为0,即让文件内的指针指向开头
    file_table[fd_idx].fd_flag = flag;
    bool* write_deny = &file_table[fd_idx].fd_inode->write_deny; 
-
    if (flag == O_WRONLY || flag == O_RDWR) {	// 只要是关于写文件,判断是否有其它进程正写此文件
 						// 若是读文件,不考虑write_deny
    /* 以下进入临界区前先关中断 */
@@ -24,7 +23,6 @@ int32_t file_open(uint32_t inode_no, uint8_t flag) {
    }  // 若是读文件或创建文件,不用理会write_deny,保持默认
    return pcb_fd_install(fd_idx);
 }
-
 /* 关闭文件 */
 int32_t file_close(struct file* file) {
    if (file == NULL) {
@@ -35,7 +33,6 @@ int32_t file_close(struct file* file) {
    file->fd_inode = NULL;   // 使文件结构可用
    return 0;
 }
-
 /* 将文件描述符转化为文件表的下标 */
 static uint32_t fd_local2global(uint32_t local_fd) {
    struct task_struct* cur = running_thread();
@@ -43,7 +40,6 @@ static uint32_t fd_local2global(uint32_t local_fd) {
    ASSERT(global_fd >= 0 && global_fd < MAX_FILE_OPEN);
    return (uint32_t)global_fd;
 } 
-
 /* 关闭文件描述符fd指向的文件,成功返回0,否则返回-1 */
 int32_t sys_close(int32_t fd) {
    int32_t ret = -1;   // 返回值默认为-1,即失败

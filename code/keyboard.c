@@ -13,19 +13,14 @@
 #define FLAG_PAD	0x8000		/* keys in num pad		*/
 
 #define MASK_RAW	0x01FF		/* raw key value = code passed to tty & MASK_RAW
-					   the value can be found either in the keymap column 0
-					   or in the list below */
-
 /* Special keys */
 #define ESC		(0x01 + FLAG_EXT)	/* Esc		*/
 #define TAB		(0x02 + FLAG_EXT)	/* Tab		*/
 #define ENTER		(0x03 + FLAG_EXT)	/* Enter	*/
 #define BACKSPACE	(0x04 + FLAG_EXT)	/* BackSpace	*/
-
 #define GUI_L		(0x05 + FLAG_EXT)	/* L GUI	*/
 #define GUI_R		(0x06 + FLAG_EXT)	/* R GUI	*/
 #define APPS		(0x07 + FLAG_EXT)	/* APPS	*/
-
 /* Shift, Ctrl, Alt */
 #define SHIFT_L		(0x08 + FLAG_EXT)	/* L Shift	*/
 #define SHIFT_R		(0x09 + FLAG_EXT)	/* R Shift	*/
@@ -33,12 +28,10 @@
 #define CTRL_R		(0x0B + FLAG_EXT)	/* R Ctrl	*/
 #define ALT_L		(0x0C + FLAG_EXT)	/* L Alt	*/
 #define ALT_R		(0x0D + FLAG_EXT)	/* R Alt	*/
-
 /* Lock keys */
 #define CAPS_LOCK	(0x0E + FLAG_EXT)	/* Caps Lock	*/
 #define	NUM_LOCK	(0x0F + FLAG_EXT)	/* Number Lock	*/
 #define SCROLL_LOCK	(0x10 + FLAG_EXT)	/* Scroll Lock	*/
-
 /* Function keys */
 #define F1		(0x11 + FLAG_EXT)	/* F1		*/
 #define F2		(0x12 + FLAG_EXT)	/* F2		*/
@@ -52,7 +45,6 @@
 #define F10		(0x1A + FLAG_EXT)	/* F10		*/
 #define F11		(0x1B + FLAG_EXT)	/* F11		*/
 #define F12		(0x1C + FLAG_EXT)	/* F12		*/
-
 /* Control Pad */
 #define PRINTSCREEN	(0x1D + FLAG_EXT)	/* Print Screen	*/
 #define PAUSEBREAK	(0x1E + FLAG_EXT)	/* Pause/Break	*/
@@ -66,12 +58,10 @@
 #define DOWN		(0x26 + FLAG_EXT)	/* Down		*/
 #define LEFT		(0x27 + FLAG_EXT)	/* Left		*/
 #define RIGHT		(0x28 + FLAG_EXT)	/* Right	*/
-
 /* ACPI keys */
 #define POWER		(0x29 + FLAG_EXT)	/* Power	*/
 #define SLEEP		(0x2A + FLAG_EXT)	/* Sleep	*/
 #define WAKE		(0x2B + FLAG_EXT)	/* Wake Up	*/
-
 /* Num Pad */
 #define PAD_SLASH	(0x2C + FLAG_EXT)	/* /		*/
 #define PAD_STAR	(0x2D + FLAG_EXT)	/* *		*/

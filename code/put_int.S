@@ -19,8 +19,6 @@ put_int:
    sub edx, 10			       ; A~F 减去10 所得到的差,再加上字符A的ascii码,便是A~F对应的ascii码
    add edx, 'A'
 
-;将每一位数字转换成对应的字符后,按照类似“大端”的顺序存储到缓冲区put_int_buffer
-;高位字符放在低地址,低位字符要放在高地址,这样和大端字节序类似,只不过咱们这里是字符序.
 .store:
 ; 此时dl中应该是数字对应的字符的ascii码
    mov [ebx+edi], dl		       
@@ -28,7 +26,6 @@ put_int:
    shr eax, 4
    mov edx, eax 
    loop .16based_4bits
-
 ;现在put_int_buffer中已全是字符,打印之前,
 ;把高位连续的字符去掉,比如把字符000123变成123
 .ready_to_print:

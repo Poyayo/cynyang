@@ -49,7 +49,7 @@ int main(void)
 \end{codeblock}
 
 这样就形成了图\ref{fig:print_char}中的效果，在字符“kernel”最后换行符\verb|"\n"|也起到了效果，
-成功换了行，而最后的“1”和“3”便是2和3之间的退格键将字符“2”删除了，只留下了“1”和“3”。
+成功换了行，而最后的“1”和“3”便是2和3之间的退格键\verb|"\b"|将字符“2”删除了，所以只留下了“1”和“3”。
 
 \subsection{字符串的打印}
 \label{subsec:str}
@@ -129,8 +129,6 @@ void main(void)
 }
 \end{ccode}  
 \end{codeblock}
-
-像这么多个字符只需要三行代码，不换行的话其实一行也就够了。
 
 \subsection{整数的打印}
 \label{subsec:int}

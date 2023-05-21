@@ -22,35 +22,29 @@ void inode_delete(struct partition* part, uint32_t inode_no, void* io_buf) {
       ide_write(part->my_disk, inode_pos.sec_lba, inode_buf, 1);
    }
 }
-
 /* 回收inode的数据块和inode本身 */
 void inode_release(struct partition* part, uint32_t inode_no) {
    struct inode* inode_to_del = inode_open(part, inode_no);
    ASSERT(inode_to_del->i_no == inode_no);
-
 /* 1 回收inode占用的所有块 */
    uint8_t block_idx = 0, block_cnt = 12;
    uint32_t block_bitmap_idx;
    uint32_t all_blocks[140] = {0};	  //12个直接块+128个间接块
- 
    /* a 先将前12个直接块存入all_blocks */
    while (block_idx < 12) {
       all_blocks[block_idx] = inode_to_del->i_sectors[block_idx];
       block_idx++;
    }
-
    /* b 如果一级间接块表存在,将其128个间接块读到all_blocks[12~], 并释放一级间接块表所占的扇区 */
    if (inode_to_del->i_sectors[12] != 0) {
       ide_read(part->my_disk, inode_to_del->i_sectors[12], all_blocks + 12, 1);
       block_cnt = 140;
-
       /* 回收一级间接块表占用的扇区 */
       block_bitmap_idx = inode_to_del->i_sectors[12] - part->sb->data_start_lba;
       ASSERT(block_bitmap_idx > 0);
       bitmap_set(&part->block_bitmap, block_bitmap_idx, 0);
       bitmap_sync(cur_part, block_bitmap_idx, BLOCK_BITMAP);
    }
-   
    /* c inode所有的块地址已经收集到all_blocks中,下面逐个回收 */
    block_idx = 0;
    while (block_idx < block_cnt) {
@@ -63,7 +57,6 @@ void inode_release(struct partition* part, uint32_t inode_no) {
       }
       block_idx++; 
    }
-
 /*2 回收该inode所占用的inode */
    bitmap_set(&part->inode_bitmap, inode_no, 0);  
    bitmap_sync(cur_part, inode_no, INODE_BITMAP);
@@ -76,10 +69,8 @@ void inode_release(struct partition* part, uint32_t inode_no) {
    inode_delete(part, inode_no, io_buf);
    sys_free(io_buf);
    /***********************************************/
-    
    inode_close(inode_to_del);
 }
-
 bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_no, void* io_buf) {
    struct inode* dir_inode = pdir->inode;
    uint32_t block_idx = 0, all_blocks[140] = {0};
@@ -91,7 +82,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
    if (dir_inode->i_sectors[12]) {
       ide_read(part->my_disk, dir_inode->i_sectors[12], all_blocks + 12, 1);
    }
-
    /* 目录项在存储时保证不会跨扇区 */
    uint32_t dir_entry_size = part->sb->dir_entry_size;
    uint32_t dir_entrys_per_sec = (SECTOR_SIZE / dir_entry_size);       // 每扇区最大的目录项数目
@@ -99,7 +89,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
    struct dir_entry* dir_entry_found = NULL;
    uint8_t dir_entry_idx, dir_entry_cnt;
    bool is_dir_first_block = false;     // 目录的第1个块 
-
    /* 遍历所有块,寻找目录项 */
    block_idx = 0;
    while (block_idx < 140) {
@@ -112,7 +101,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
       memset(io_buf, 0, SECTOR_SIZE);
       /* 读取扇区,获得目录项 */
       ide_read(part->my_disk, all_blocks[block_idx], io_buf, 1);
-
       /* 遍历所有的目录项,统计该扇区的目录项数量及是否有待删除的目录项 */
       while (dir_entry_idx < dir_entrys_per_sec) {
 	 if ((dir_e + dir_entry_idx)->f_type != FT_UNKNOWN) {
@@ -130,13 +118,11 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
 	 }
 	 dir_entry_idx++;
       } 
-
       /* 若此扇区未找到该目录项,继续在下个扇区中找 */
       if (dir_entry_found == NULL) {
 	 block_idx++;
 	 continue;
       }
-
    /* 在此扇区中找到目录项后,清除该目录项并判断是否回收扇区,随后退出循环直接返回 */
       ASSERT(dir_entry_cnt >= 1);
     /* 除目录第1个扇区外,若该扇区上只有该目录项自己,则将整个扇区回收 */
@@ -145,7 +131,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
 	 uint32_t block_bitmap_idx = all_blocks[block_idx] - part->sb->data_start_lba;
 	 bitmap_set(&part->block_bitmap, block_bitmap_idx, 0);
 	 bitmap_sync(cur_part, block_bitmap_idx, BLOCK_BITMAP);
-
 	 /* b 将块地址从数组i_sectors或索引表中去掉 */
 	 if (block_idx < 12) {
 	    dir_inode->i_sectors[block_idx] = 0;
@@ -159,7 +144,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
 	       }
 	    }
 	    ASSERT(indirect_blocks >= 1);  // 包括当前间接块
-
 	    if (indirect_blocks > 1) {	  // 间接索引表中还包括其它间接块,仅在索引表中擦除当前这个间接块地址
 	       all_blocks[block_idx] = 0; 
 	       ide_write(part->my_disk, dir_inode->i_sectors[12], all_blocks + 12, 1); 
@@ -168,7 +152,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
 	       block_bitmap_idx = dir_inode->i_sectors[12] - part->sb->data_start_lba;
 	       bitmap_set(&part->block_bitmap, block_bitmap_idx, 0);
 	       bitmap_sync(cur_part, block_bitmap_idx, BLOCK_BITMAP);
-	       
 	       /* 将间接索引表地址清0 */
 	       dir_inode->i_sectors[12] = 0;
 	    }
@@ -177,7 +160,6 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
 	 memset(dir_entry_found, 0, dir_entry_size);
 	 ide_write(part->my_disk, all_blocks[block_idx], io_buf, 1);
       }
-
    /* 更新i结点信息并同步到硬盘 */
       ASSERT(dir_inode->i_size >= dir_entry_size);
       dir_inode->i_size -= dir_entry_size;
@@ -189,11 +171,9 @@ bool delete_dir_entry(struct partition* part, struct dir* pdir, uint32_t inode_n
    /* 所有块中未找到则返回false,若出现这种情况应该是serarch_file出错了 */
    return false;
 }
-
 /* 删除文件(非目录),成功返回0,失败返回-1 */
 int32_t sys_unlink(const char* pathname) {
    ASSERT(strlen(pathname) < MAX_PATH_LEN);
-
    /* 先检查待删除的文件是否存在 */
    struct path_search_record searched_record;
    memset(&searched_record, 0, sizeof(struct path_search_record));
@@ -209,7 +189,6 @@ int32_t sys_unlink(const char* pathname) {
       dir_close(searched_record.parent_dir);
       return -1;
    }
-
    /* 检查是否在已打开文件列表(文件表)中 */
    uint32_t file_idx = 0;
    while (file_idx < MAX_FILE_OPEN) {
@@ -224,7 +203,6 @@ int32_t sys_unlink(const char* pathname) {
       return -1;
    }
    ASSERT(file_idx == MAX_FILE_OPEN);
-   
    /* 为delete_dir_entry申请缓冲区 */
    void* io_buf = sys_malloc(SECTOR_SIZE + SECTOR_SIZE);
    if (io_buf == NULL) {
@@ -232,7 +210,6 @@ int32_t sys_unlink(const char* pathname) {
       printk("sys_unlink: malloc for io_buf failed\n");
       return -1;
    }
-
    struct dir* parent_dir = searched_record.parent_dir;  
    delete_dir_entry(cur_part, parent_dir, inode_no, io_buf);
    inode_release(cur_part, inode_no);

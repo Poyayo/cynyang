@@ -12,7 +12,6 @@ kernel_init:
 .each_segment:
    cmp byte [ebx + 0], PT_NULL		  ; 若p_type等于 PT_NULL,说明此program header未使用。
    je .PTNULL
-
    ;为函数memcpy压入参数,参数是从右往左依然压入.函数原型类似于 memcpy(dst,src,size)
    push dword [ebx + 16]		  ; program header中偏移16字节的地方是p_filesz,压入函数memcpy的第三个参数:size
    mov eax, [ebx + 4]			  ; 距程序头偏移量为4字节的位置是p_offset
@@ -27,9 +26,6 @@ kernel_init:
    ret
 
 ;----------  逐字节拷贝 mem_cpy(dst,src,size) ------------
-;输入:栈中三个参数(dst,src,size)
-;输出:无
-;---------------------------------------------------------
 mem_cpy:		      
    cld
    push ebp

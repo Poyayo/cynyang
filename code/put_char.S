@@ -33,10 +33,8 @@ put_char:
    cmp cl, 0x8				  ;BS(backspace)的asc码是8
    jz .is_backspace
    jmp .put_other	   
-;;;;;;;;;;;;;;;;;;
 
  .is_backspace:		      
-;;;;;;;;;;;;       backspace的一点说明	     ;;;;;;;;;;
 ; 当为backspace时,本质上只要将光标移向前一个显存位置即可.后面再输入的字符自然会覆盖此处的字符
 ; 但有可能在键入backspace后并不再键入新的字符,这时在光标已经向前移动到待删除的字符位置,但字符还在原处,
 ; 这就显得好怪异,所以此处添加了空格或空字符0
@@ -47,7 +45,6 @@ put_char:
    mov byte [gs:bx], 0x07
    shr bx,1
    jmp .set_cursor
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  .put_other:
    shl bx, 1				  ; 光标位置是用2字节表示,将光标值乘2,表示对应显存中的偏移字节
@@ -68,7 +65,6 @@ put_char:
    div si				  ; 把\n和\r都处理为linux中\n的意思，也就是下一行的行首。
    sub bx, dx				  ; 光标值减去除80的余数便是取整
 					  ; 以上4行处理\r的代码
-
  .is_carriage_return_end:                 ; 回车符CR处理结束
    add bx, 80
    cmp bx, 2000
@@ -116,7 +112,6 @@ put_char:
 global cls_screen
 cls_screen:
    pushad
-   ;;;;;;;;;;;;;;;
 	; 由于用户程序的cpl为3,显存段的dpl为0,故用于显存段的选择子gs在低于自己特权的环境中为0,
 	; 导致用户程序再次进入中断后,gs为0,故直接在put_str中每次都为gs赋值. 
    mov ax, SELECTOR_VIDEO	       ; 不能直接把立即数送入gs,须由ax中转

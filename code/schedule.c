@@ -13,11 +13,9 @@ static void intr_timer_handler(void) {
       cur_thread->ticks--;
    }
 }
-
 /* 实现任务调度 */
 void schedule() {
    ASSERT(intr_get_status() == INTR_OFF);
-
    struct task_struct* cur = running_thread(); 
    if (cur->status == TASK_RUNNING) { // 若此线程只是cpu时间片到了,将其加入到就绪队列尾
       ASSERT(!elem_find(&thread_ready_list, &cur->general_tag));
@@ -28,7 +26,6 @@ void schedule() {
       /* 若此线程需要某事件发生后才能继续上cpu运行,
       不需要将其加入队列,因为当前线程不在就绪队列中。*/
    }
-
    /* 如果就绪队列中没有可运行的任务,就唤醒idle */
    if (list_empty(&thread_ready_list)) {
       thread_unblock(idle_thread);

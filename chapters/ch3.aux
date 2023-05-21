@@ -1,53 +1,75 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {3\hspace  {.3em}}操作系统的启动过程}{7}{chapter.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {3\hspace  {.3em}}SheepOS的启动过程}{9}{chapter.3}\protected@file@percent }
 \@writefile{lof}{\addvspace {10.0pt}}
 \@writefile{lot}{\addvspace {10.0pt}}
-\newlabel{cha:OSboot}{{3}{7}{操作系统的启动过程}{chapter.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}基本输入输出系统（BIOS）}{7}{section.3.1}\protected@file@percent }
-\newlabel{sec:BIOS}{{3.1}{7}{基本输入输出系统（BIOS）}{section.3.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Bochs屏幕截图\relax }}{7}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:img2-1}{{3.1}{7}{Bochs屏幕截图\relax }{figure.caption.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces MBR的结构\relax }}{8}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:mbr}{{3.2}{8}{MBR的结构\relax }{figure.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}MBR的工作}{8}{section.3.2}\protected@file@percent }
-\newlabel{sec:MBR}{{3.2}{8}{MBR的工作}{section.3.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Hello, OS World!\relax }}{9}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:img2-2}{{3.3}{9}{Hello, OS World!\relax }{figure.caption.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces 实模式下的内存布局\relax }}{10}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:neicun}{{3.4}{10}{实模式下的内存布局\relax }{figure.caption.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Loader的工作}{10}{section.3.3}\protected@file@percent }
-\newlabel{sec:Loader}{{3.3}{10}{Loader的工作}{section.3.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}内核的启动}{10}{section.3.4}\protected@file@percent }
-\newlabel{sec:kernel}{{3.4}{10}{内核的启动}{section.3.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}从实模式到保护模式}{10}{subsection.3.4.1}\protected@file@percent }
-\newlabel{subsec:protect}{{3.4.1}{10}{从实模式到保护模式}{subsection.3.4.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.2}内核初始化}{11}{subsection.3.4.2}\protected@file@percent }
+\newlabel{cha:OSboot}{{3}{9}{SheepOS的启动过程}{chapter.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}相关概念简介}{9}{section.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}基本输入输出系统（BIOS）}{9}{subsection.3.1.1}\protected@file@percent }
+\newlabel{sec:BIOS}{{3.1.1}{9}{基本输入输出系统（BIOS）}{subsection.3.1.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces MBR的结构\relax }}{10}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:mbr}{{3.2}{10}{MBR的结构\relax }{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Bochs屏幕截图\relax }}{10}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:img2-1}{{3.1}{10}{Bochs屏幕截图\relax }{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}MBR的工作}{10}{subsection.3.1.2}\protected@file@percent }
+\newlabel{sec:MBR}{{3.1.2}{10}{MBR的工作}{subsection.3.1.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces 实模式下的内存布局\relax }}{12}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:neicun}{{3.4}{12}{实模式下的内存布局\relax }{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Hello, OS World!\relax }}{12}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:img2-2}{{3.3}{12}{Hello, OS World!\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}Loader的工作}{12}{subsection.3.1.3}\protected@file@percent }
+\newlabel{sec:Loader}{{3.1.3}{12}{Loader的工作}{subsection.3.1.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.4}内核的启动}{13}{subsection.3.1.4}\protected@file@percent }
+\newlabel{sec:kernel}{{3.1.4}{13}{内核的启动}{subsection.3.1.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{从实模式到保护模式}{13}{subsubsection*.11}\protected@file@percent }
+\newlabel{subsec:protect}{{3.1.4}{13}{从实模式到保护模式}{subsubsection*.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{内核初始化}{14}{subsubsection*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}SheepOS的启动过程}{14}{section.3.2}\protected@file@percent }
+\newlabel{sec:booting}{{3.2}{14}{SheepOS的启动过程}{section.3.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}读取硬盘扇区}{14}{subsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}进入保护模式}{15}{subsection.3.2.2}\protected@file@percent }
+\newlabel{sec:inprotect}{{3.2.2}{15}{进入保护模式}{subsection.3.2.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.5}{\ignorespaces 段描述符格式\relax }}{16}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:gdt}{{3.5}{16}{段描述符格式\relax }{figure.caption.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.6}{\ignorespaces 特权级结构\relax }}{16}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:tequan}{{3.6}{16}{特权级结构\relax }{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.7}{\ignorespaces 用xp命令查看物理内存\relax }}{17}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:xp}{{3.7}{17}{用xp命令查看物理内存\relax }{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}加载内核}{17}{subsection.3.2.3}\protected@file@percent }
+\newlabel{subsec:kernel}{{3.2.3}{17}{加载内核}{subsection.3.2.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.8}{\ignorespaces 分页机制\relax }}{18}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:fenye}{{3.8}{18}{分页机制\relax }{figure.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.9}{\ignorespaces 分页机制的作用\relax }}{18}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:fenyezy}{{3.9}{18}{分页机制的作用\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.10}{\ignorespaces 分页后GDT的变化\relax }}{19}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:infogdt}{{3.10}{19}{分页后GDT的变化\relax }{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.11}{\ignorespaces 可用缓冲区\relax }}{20}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:hc}{{3.11}{20}{可用缓冲区\relax }{figure.caption.19}{}}
 \@setckpt{chapters/ch3}{
-\setcounter{page}{12}
+\setcounter{page}{21}
 \setcounter{equation}{0}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
 \setcounter{enumiv}{0}
-\setcounter{footnote}{1}
+\setcounter{footnote}{2}
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{chapter}{3}
-\setcounter{section}{4}
-\setcounter{subsection}{2}
+\setcounter{section}{2}
+\setcounter{subsection}{3}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{4}
+\setcounter{figure}{11}
 \setcounter{table}{0}
 \setcounter{task}{0}
 \setcounter{lofdepth}{1}
 \setcounter{lotdepth}{1}
 \setcounter{section@level}{0}
 \setcounter{Item}{0}
-\setcounter{Hfootnote}{4}
-\setcounter{bookmark@seq@number}{22}
+\setcounter{Hfootnote}{5}
+\setcounter{bookmark@seq@number}{25}
 \setcounter{fixmecount}{0}
 \setcounter{fxnotecount}{0}
 \setcounter{fxwarningcount}{0}
@@ -63,7 +85,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{5}
+\setcounter{instcount}{7}
 \setcounter{maxnames}{1}
 \setcounter{minnames}{1}
 \setcounter{maxitems}{1}
@@ -174,24 +196,24 @@
 \setcounter{gbbiblocalcase}{0}
 \setcounter{lanordernum}{0}
 \setcounter{cbx@tempcnta}{0}
-\setcounter{cbx@tempcntb}{5}
+\setcounter{cbx@tempcntb}{1}
 \setcounter{cbx@tempcntc}{0}
 \setcounter{cbx@tempcntd}{-1}
 \setcounter{caption@flags}{2}
 \setcounter{continuedfloat}{0}
 \setcounter{subfigure}{0}
 \setcounter{subtable}{0}
-\setcounter{FancyVerbLine}{4}
+\setcounter{FancyVerbLine}{7}
 \setcounter{linenumber}{1}
-\setcounter{LN@truepage}{23}
+\setcounter{LN@truepage}{32}
 \setcounter{FV@TrueTabGroupLevel}{0}
 \setcounter{FV@TrueTabCounter}{0}
 \setcounter{FV@HighlightLinesStart}{0}
 \setcounter{FV@HighlightLinesStop}{0}
-\setcounter{FancyVerbLineBreakLast}{0}
+\setcounter{FancyVerbLineBreakLast}{3}
 \setcounter{FV@BreakBufferDepth}{0}
 \setcounter{float@type}{8}
-\setcounter{minted@FancyVerbLineTemp}{3}
-\setcounter{minted@pygmentizecounter}{9}
+\setcounter{minted@FancyVerbLineTemp}{1}
+\setcounter{minted@pygmentizecounter}{16}
 \setcounter{listing}{0}
 }

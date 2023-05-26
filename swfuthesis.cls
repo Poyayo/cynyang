@@ -59,6 +59,12 @@ nomarginpar]{geometry}
 
 \titlespacing{\chapter}{0pt}{-20pt}{30pt}
 
+%%%%% tocloft
+\RequirePackage{tocloft}
+\setlength{\cftbeforetoctitleskip}{0em}% make "目录" higher
+\setlength{\cftbeforeloftitleskip}{0em}
+\setlength{\cftbeforelottitleskip}{0em}
+
 %%%%% xstring 
 \RequirePackage{xstring} % for \StrSubstitute{} in \fancyhead
 
@@ -223,8 +229,10 @@ url=false,doi=false,isbn=false]{biblatex}
     \vspace*{5mm}
     \begin{center}
       \makebox[17em][s]{\includegraphics[width=17em]{swfulogo-text}}\\[6mm]%
-      \makebox[19em][s]{{\LARGE\heiti 本科毕业论文\hspace{-.5ex}（设计）}}\\[1mm]%
-      \makebox[13em][c]{\hspace{.5em}{\LARGE\heiti（\zhdigits{\SWFU@Year}\,届）}}\\[8mm]%
+      \makebox[19em][s]{{\LARGE\heiti%
+          本科毕业论文\:(设计)}}\\[1mm]%
+      \makebox[13em][c]{\hspace{.5em}{\LARGE\heiti%
+          （\zhdigits{\SWFU@Year}\,届）}}\\[8mm]%
       \makebox[8em][s]{\includegraphics[width=8em]{swfulogo-emblem}}\\[1cm]
       \begin{minipage}{\linewidth}
         \begin{large}
